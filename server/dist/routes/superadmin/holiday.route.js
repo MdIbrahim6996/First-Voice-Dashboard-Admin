@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var holiday_controller_1 = require("../../controllers/holiday.controller");
+var router = (0, express_1.Router)();
+router.post("/", holiday_controller_1.createHoliday);
+router.get("/", holiday_controller_1.getAllHoliday);
+router.put("/:id", holiday_controller_1.updateHoliday);
+router.delete("/:id", holiday_controller_1.deleteHoliday);
+exports.default = router;

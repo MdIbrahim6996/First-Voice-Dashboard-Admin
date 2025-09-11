@@ -1,0 +1,183 @@
+generator client {
+  provider        = "prisma-client-js"
+  // output          = "../src/generated/prisma"
+  previewFeatures = ["strictUndefinedChecks"]
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+  url      = env("DB_P_URL")
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  name               String
+  alias              String               @unique
+  employeeId         String               @unique
+  phone              String
+  isBlocked          Boolean              @default(false)
+  password           String
+  role               String               @default("user")
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  processId          Int?
+  process            Process?             @relation(fields: [processId], references: [id], onDelete: SetNull)
+  attendances        Attendance[]
+  createdLeads       Lead[]               @relation("leadByUser")
+  closedLeads        Lead[]               @relation("leadCloser")
+  verifiedLeads      Lead[]               @relation("leadVerifier")
+  Notification       Notification[]
+  LeadCount          LeadCount[]
+  StatusChangeReason StatusChangeReason[]
+}
+
+model Process {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Lead      Lead[]
+  plans     Plan[]
+  User      User[]
+}
+
+model Plan {
+  id        Int      @id @default(autoincrement())
+  name      String
+  processId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Lead      Lead[]
+  process   Process? @relation(fields: [processId], references: [id], onDelete: SetNull)
+}
+
+model Holiday {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendance {
+  id       Int      @id @default(autoincrement())
+  userId   Int?     @default(1)
+  isLate   Boolean  @default(false)
+  dateTime DateTime @default(now())
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Appliance {
+  id              Int      @id @default(autoincrement())
+  name            String
+  makeOfAppliance String
+  age             Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  Lead            Lead[]
+}
+
+model Lead {
+  // Customer Info
+  id                 Int                  @id @default(autoincrement())
+  title              String
+  firstName          String
+  middleName         String?
+  lastName           String
+  centre             String
+  address            String?
+  city               String?
+  county             String?
+  pincode            String
+  password           String?
+  dateOfBirth        DateTime?
+  phone              String
+  poa                Boolean              @default(false)
+  // Process Details
+  processId          Int?
+  planId             Int?
+  closerId           Int?
+  leadByUserId       Int?
+  verifierId         Int?
+  fee                Int?
+  currency           String?
+  shift              String?
+  paymentMethod      String?
+  comment            String?
+  // Bank Details
+  bankName           String?
+  accountName        String?
+  accountNumber      String?
+  sort               String?
+  // Card Details
+  cardName           String?
+  cardBankName       String?
+  cardNumber         String?
+  expiry             String?
+  cardCvv            String?
+  // Relations
+  applianceId        Int?
+  statusId           Int?                 @default(1)
+  saleDate           DateTime             @default(now())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  status             Status?              @relation(fields: [statusId], references: [id], onDelete: SetNull)
+  appliance          Appliance?           @relation(fields: [applianceId], references: [id], onDelete: SetNull)
+  closer             User?                @relation(name: "leadCloser", fields: [closerId], references: [id], onDelete: SetNull)
+  leadBy             User?                @relation(name: "leadByUser", fields: [leadByUserId], references: [id], onDelete: SetNull)
+  verifier           User?                @relation(name: "leadVerifier", fields: [verifierId], references: [id], onDelete: SetNull)
+  plan               Plan?                @relation(fields: [planId], references: [id], onDelete: SetNull)
+  process            Process?             @relation(fields: [processId], references: [id], onDelete: SetNull)
+  StatusChangeReason StatusChangeReason[]
+}
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Lead      Lead[]
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  type      String
+  userId    Int?
+  saleDate  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model LeadCount {
+  id        Int      @id @default(autoincrement())
+  count     Int      @default(0)
+  date      Int
+  month     Int
+  year      Int
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, month, year, userId], name: "uniqueDate")
+}
+
+model StatusChangeReason {
+  id         Int     @id @default(autoincrement())
+  reason     String
+  fromStatus String?
+  toStatus   String?
+  userId     Int?
+  user       User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  leadId     Int?
+  lead       Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
