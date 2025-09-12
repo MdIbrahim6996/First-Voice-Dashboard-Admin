@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:5173"],
+        origin: ["http://localhost:5173","https://first-voice-dashboard-admin.onrender.com"],
         credentials: true,
         optionsSuccessStatus: 200,
     })
@@ -23,8 +23,6 @@ app.use(morgan("dev"));
 app.use(compression());
 
 app.use("/api/v1", router);
-
-console.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(path.resolve(), "../client", "dist")));
