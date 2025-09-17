@@ -37,7 +37,7 @@ export type LeadsFormInput = {
         expiry: string;
         cvv: string;
     };
-    appliances: { name: string; make: string; age: number }[];
+    appliances: { name: string; makeOfAppliance: string; age: number }[];
     currency: string;
     shift: string;
     bankName: string;
@@ -55,12 +55,32 @@ export type UpdateLeadsFormInput = {
     centre: string;
     address: string;
     city: string;
-    country: string;
+    county: string;
     pincode: string;
     password: string;
     dateOfBirth: string;
     phone: string;
+    poa: boolean;
 
+    process: number;
+    plan: string;
+    closer: string;
+    verifier: string;
+    paymentMethod: string;
+    bank: {
+        bankName: string;
+        accountName: string;
+        accountNumber: string;
+        sort: string;
+    };
+    card: {
+        name: string;
+        bankName: string;
+        cardNumber: string;
+        expiry: string;
+        cvv: string;
+    };
+    shift: string;
     fee: number;
     currency: string;
     bankName: string;

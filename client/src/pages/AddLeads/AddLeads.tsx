@@ -2,13 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
-import { createSuperAdminLead } from "../../api/lead";
 import { getAllProcess } from "../../api/process";
 import { getAllPlan } from "../../api/plan";
 import type { LeadsFormInput } from "../../types/form.types";
-import { getAllUserforUsers } from "../../api/user";
+import { getAllUser } from "../../api/user";
 import { useEffect, useState } from "react";
 import valid from "card-validator";
+import { createLead } from "../../api/lead";
 
 const AddLeads = () => {
     const date = new Date();
@@ -39,7 +39,7 @@ const AddLeads = () => {
         queryKey: ["process"],
         queryFn: getAllProcess,
     });
-    
+
     const { data: plan } = useQuery({
         queryKey: ["plan"],
         queryFn: getAllPlan,
@@ -47,7 +47,7 @@ const AddLeads = () => {
 
     const { data: user } = useQuery({
         queryKey: ["user"],
-        queryFn: getAllUserforUsers,
+        queryFn: getAllUser,
     });
 
     const processValue = watch("process") ? watch("process") : 1;
@@ -56,10 +56,13 @@ const AddLeads = () => {
     const filterPlan = (id: number) =>
         plan?.filter((item: any) => id == item?.processId);
 
-    const filterUser = user?.filter((item: any) => item?.role === "user");
+    // const filterUser = user?.filter((item: any) => item?.role === "user");
+    const closerVerifierUser = user?.filter(
+        (item: any) => item?.role === "closer" || item?.role === "verifier"
+    );
 
     const { mutate: createLeadMutation, isPending } = useMutation({
-        mutationFn: (formData) => createSuperAdminLead(formData),
+        mutationFn: (formData) => createLead(formData),
         onSuccess: (data) => {
             if (data?.id) {
                 toast.success("Lead Created Successfully!");
@@ -449,9 +452,9 @@ const AddLeads = () => {
                                 <option selected value="">
                                     Select a Closer
                                 </option>
-                                {filterUser?.map((item: any) => (
+                                {closerVerifierUser?.map((item: any) => (
                                     <option key={item?.id} value={item?.id}>
-                                        {item?.name?.toUpperCase()}
+                                        {item?.alias?.toUpperCase()}
                                     </option>
                                 ))}
                             </select>
@@ -475,9 +478,9 @@ const AddLeads = () => {
                                 <option selected value="">
                                     Select a Verifier
                                 </option>
-                                {filterUser?.map((item: any) => (
+                                {closerVerifierUser?.map((item: any) => (
                                     <option key={item?.id} value={item?.id}>
-                                        {item?.name?.toUpperCase()}
+                                        {item?.alias?.toUpperCase()}
                                     </option>
                                 ))}
                             </select>

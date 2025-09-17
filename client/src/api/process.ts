@@ -23,12 +23,10 @@ export const createProcess = async (formData: any) => {
     }
 };
 
-// SUPERADMIN
+// COMMON
 export const getAllProcess = async () => {
     try {
-        const { data } = await axiosInstance.get(
-            `${SERVER_URL}/superadmin/process`
-        );
+        const { data } = await axiosInstance.get(`/process`);
         return data;
     } catch (error) {
         console.log(error);
@@ -77,9 +75,7 @@ export const deleteProcess = async (id: number) => {
 // USER
 export const getAllProcessforUser = async () => {
     try {
-        const { data } = await axiosInstance.get(
-            `${SERVER_URL}/user/process`
-        );
+        const { data } = await axiosInstance.get(`${SERVER_URL}/user/process`);
         return data;
     } catch (error) {
         console.log(error);

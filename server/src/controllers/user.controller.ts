@@ -97,7 +97,7 @@ export const updateUser = async (
     next: NextFunction
 ) => {
     const { id } = req.params;
-    console.log(req.body);
+    console.log("body", req.body.block!!);
     const {
         name,
         alias,
@@ -127,7 +127,7 @@ export const updateUser = async (
                 employeeId,
                 phone,
                 role,
-                isBlocked: block === 1 ? true : false,
+                isBlocked: +block === 1 ? true : false,
                 alias,
                 processId: process ? parseInt(process) : Prisma.skip,
             },

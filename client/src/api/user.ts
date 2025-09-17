@@ -3,6 +3,16 @@ import { SERVER_URL } from "../constants/apiConstant";
 import { axiosInstance } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
 
+//COMMON
+export const getAllUser = async () => {
+    try {
+        const { data } = await axiosInstance.get(`/user`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 //SUPERADMIN
 export const createUser = async (formData: any) => {
     try {
@@ -39,17 +49,7 @@ export const updateUser = async (formData: any) => {
         return error;
     }
 };
-//SUPERADMIN
-export const getAllUser = async () => {
-    try {
-        const { data } = await axiosInstance.get(
-            `${SERVER_URL}/superadmin/user`
-        );
-        return data;
-    } catch (error) {
-        console.log(error);
-    }
-};
+
 //SUPERADMIN
 export const deleteUser = async (id: number) => {
     try {

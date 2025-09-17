@@ -1,13 +1,13 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 import { FaEye, FaFileCsv } from "react-icons/fa";
 import { motion } from "motion/react";
+import { CSVLink } from "react-csv";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllStatus } from "../../api/status";
 import { deleteLead, getAllLead } from "../../api/lead";
 import { getAllProcess } from "../../api/process";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllUser } from "../../api/user";
-import { CSVLink } from "react-csv";
 import DeleteModal from "../../components/Modal/DeleteModal";
 import EditLeadModal from "../../components/Modal/EditLeadModal";
 import LeadDetailModal from "../../components/Modal/LeadDetailModal";
@@ -28,6 +28,28 @@ const Leads = () => {
     const [detail, setDetail] = useState({});
     const [id, setId] = useState<number>();
 
+    const topScrollRef = useRef<HTMLDivElement | null>(null);
+    const bottomScrollRef = useRef<HTMLDivElement | null>(null);
+    const tableRef = useRef<HTMLTableElement | null>(null);
+
+    useEffect(() => {
+        const top = topScrollRef.current;
+        const bottom = bottomScrollRef.current;
+
+        if (!top || !bottom) return;
+
+        const syncTop = () => (bottom.scrollLeft = top.scrollLeft);
+        const syncBottom = () => (top.scrollLeft = bottom.scrollLeft);
+
+        top.addEventListener("scroll", syncTop);
+        bottom.addEventListener("scroll", syncBottom);
+
+        return () => {
+            top.removeEventListener("scroll", syncTop);
+            bottom.removeEventListener("scroll", syncBottom);
+        };
+    });
+
     const [show, setShow] = useState({
         edit: false,
         delete: false,
@@ -46,6 +68,9 @@ const Leads = () => {
     });
     const filteredUsers = userData?.filter(
         (item: any) => item?.role === "user"
+    );
+    const closerVerifierUsers = userData?.filter(
+        (item: any) => item?.role === "closer" || item?.role === "verifier"
     );
 
     const { data: statusData } = useQuery({
@@ -80,28 +105,80 @@ const Leads = () => {
         },
     });
 
+    const excelLeadsData = leads?.map((item: any) => ({
+        status: item?.status?.name?.toUpperCase(),
+        saleDate: item?.saleDate?.substring(0, 10),
+        leadBy: item?.leadBy?.alias?.toUpperCase(),
+        closer: item?.closer?.alias?.toUpperCase(),
+        centre: item?.centre?.toUpperCase(),
+        // PERSONAL
+        title: item?.title?.toUpperCase(),
+        firstName: item?.firstName?.toUpperCase(),
+        middleName: item?.middleName?.toUpperCase(),
+        lastName: item?.lastName?.toUpperCase(),
+        address: item?.address,
+        city: item?.city?.toUpperCase(),
+        county: item?.county?.toUpperCase(),
+        post: item?.pincode,
+        dateOfBirth: item?.dateOfBirth?.substring(0, 10),
+        password: item?.password,
+        phone: item?.phone?.toString(),
+        // PROCESS / PLAN
+        process: item?.process?.name?.toUpperCase(),
+        plan: item?.plan?.name?.toUpperCase(),
+        // BANK
+        paymentMethod: item?.paymentMethod?.toUpperCase(),
+        bankName: item?.bankName?.toUpperCase(),
+        accountName: item?.accountName?.toUpperCase(),
+        accountNumber: item?.accountNumber?.toUpperCase(),
+        sort: item?.sort?.toUpperCase(),
+        // CARD
+        cardName: item?.cardName?.toUpperCase(),
+        cardBankName: item?.cardBankName?.toUpperCase(),
+        cardNumber: item?.cardNumber,
+        cardCvv: item?.cardCvv,
+        expiry: item?.expiry,
+        comment: item?.comment,
+    }));
+    console.log(leads);
+    console.log(excelLeadsData);
+
     const headers = [
-        { label: "ACCOUNT NAME", key: "accountName" },
-        { label: "ADDRESS", key: "address" },
-        { label: "BANK NAME", key: "bankName" },
+        { label: "STATUS", key: "status" },
+        { label: "SALE DATE", key: "saleDate" },
+        { label: "LEAD USER", key: "leadBy" }, //name or alias
+        { label: "CLOSER", key: "closer" }, //name or alias
         { label: "CENTRE", key: "centre" },
-        { label: "CITY", key: "city" },
-        { label: "COUNTRY", key: "country" },
-        { label: "CURRENCY", key: "currency" },
+        //
         { label: "TITLE", key: "title" },
         { label: "FIRST NAME", key: "firstName" },
         { label: "MIDDLE NAME", key: "middleName" },
         { label: "LAST NAME", key: "lastName" },
+        { label: "ADDRESS", key: "address" },
+        { label: "CITY", key: "city" },
+        { label: "COUNTY", key: "county" },
+        { label: "POST CODE", key: "post" },
         { label: "DATE OF BIRTH", key: "dateOfBirth" },
+        { label: "PASSWORD", key: "password" },
         { label: "PHONE", key: "phone" },
+        // { label: "POA", key: "poa" },
+        // PLAN DETAILS
         { label: "PROCESS", key: "process" },
         { label: "PLAN", key: "plan" },
-        { label: "FEE", key: "fee" },
-        { label: "SALE DATE", key: "saleDate" },
-        { label: "STATUS", key: "status.name" },
+        // PAYMENT DETAILS
+        // BANK
+        { label: "PAYMENT METHOD", key: "paymentMethod" },
+        { label: "BANK NAME", key: "bankName" },
+        { label: "ACCOUNT NAME", key: "accountName" },
+        { label: "ACCOUNT NUMBER", key: "accountNumber" },
         { label: "SORT", key: "sort" },
-        { label: "PROCESS ID", key: "processId" },
-        { label: "PLAN ID", key: "planId" },
+        // CARD
+        { label: "NAME ON CARD", key: "cardName" },
+        { label: "CARD NUMBER", key: "cardNumber" },
+        { label: "CARD EXPIRY", key: "expiry" },
+        { label: "CARD CVV", key: "cardCvv" },
+        //
+        { label: "COMMENT", key: "comment" },
     ];
 
     const resetFilters = () => {
@@ -116,6 +193,7 @@ const Leads = () => {
         setToDate("");
         refetch();
     };
+
     return (
         <>
             <div className="overflow-hidden">
@@ -129,11 +207,19 @@ const Leads = () => {
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="phone">Phone</label>
                                 <input
+                                    autoComplete="off"
                                     type="text"
                                     name="phone"
                                     placeholder="PHONE"
                                     value={phone}
                                     onChange={(e) => setPhone(e?.target?.value)}
+                                    onKeyDown={(
+                                        e: React.KeyboardEvent<HTMLInputElement>
+                                    ) => {
+                                        if (e.key === "Enter") {
+                                            refetch();
+                                        }
+                                    }}
                                     id="phone"
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
@@ -179,7 +265,7 @@ const Leads = () => {
                                             value={item?.id}
                                             className="uppercase"
                                         >
-                                            {item?.name}
+                                            {item?.alias}
                                         </option>
                                     ))}
                                 </select>
@@ -198,13 +284,13 @@ const Leads = () => {
                                     <option value={0} selected disabled>
                                         Select Closer User
                                     </option>
-                                    {filteredUsers?.map((item: any) => (
+                                    {closerVerifierUsers?.map((item: any) => (
                                         <option
                                             key={item?.id}
                                             value={item?.id}
                                             className="uppercase"
                                         >
-                                            {item?.name}
+                                            {item?.alias}
                                         </option>
                                     ))}
                                 </select>
@@ -224,13 +310,13 @@ const Leads = () => {
                                     <option value={0} selected disabled>
                                         Select Verifier User
                                     </option>
-                                    {filteredUsers?.map((item: any) => (
+                                    {closerVerifierUsers?.map((item: any) => (
                                         <option
                                             key={item?.id}
                                             value={item?.id}
                                             className="uppercase"
                                         >
-                                            {item?.name}
+                                            {item?.alias}
                                         </option>
                                     ))}
                                 </select>
@@ -323,7 +409,7 @@ const Leads = () => {
                         transition={{ duration: 0.5, delay: 0.25 }}
                         className="mt-1 text-sm font-normal text-gray-700 w-full"
                     >
-                        <div className="flex  mb-5 items-center justify-between">
+                        <div className="flex mb-5 items-center justify-between">
                             <div className="flex gap-x-1">
                                 {statusData?.map((item: any) => (
                                     <button
@@ -361,16 +447,16 @@ const Leads = () => {
                                 ))}
                             </div>
 
-                            <button className="py-1.5 px-7 bg-green-700 text-white rounded-md text-sm flex gap-1 items-center cursor-pointer">
-                                <FaFileCsv className="text-lg" />{" "}
-                                <CSVLink
-                                    headers={headers}
-                                    data={leads ? leads : []}
-                                    filename="Leads.csv"
-                                >
-                                    Export as CSV
-                                </CSVLink>
-                            </button>
+                            <CSVLink
+                                headers={headers}
+                                data={excelLeadsData ? excelLeadsData : []}
+                                filename="Leads.csv"
+                            >
+                                <button className="py-1.5 px-7 bg-green-700 text-white rounded-md text-sm flex gap-1 items-center cursor-pointer">
+                                    <FaFileCsv className="text-lg" /> Export as
+                                    CSV
+                                </button>
+                            </CSVLink>
                         </div>
                     </motion.div>
 
@@ -380,200 +466,251 @@ const Leads = () => {
                         transition={{ duration: 0.5 }}
                         className="relative overflow-x-auto shadow-md sm:rounded-lg w-full"
                     >
-                        {!isLoading ? (
-                            leads?.length > 0 ? (
-                                <table className="text-sm text-left rtl:text-right text-gray-500">
-                                    <thead className="text-center text-gray-700 uppercase bg-gray-200">
-                                        <tr>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Sr. No.
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Actions
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                status
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Sale Date
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Lead By
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Closed By
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Verified By
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Name
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Phone
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Process
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Plan
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {leads?.map((item: any, i: number) => (
-                                            <tr
-                                                key={item?.id}
-                                                className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
-                                            >
+                        <div
+                            ref={topScrollRef}
+                            style={{
+                                overflowX: "auto",
+                                overflowY: "hidden",
+                                height: "20px",
+                            }}
+                        >
+                            {/* Fake wide element to create scrollbar */}
+                            <div
+                                style={{
+                                    width: "2000px",
+                                    height: "1px",
+                                }}
+                            />
+                        </div>
+                        <div
+                            ref={bottomScrollRef}
+                            style={{
+                                overflowX: "auto",
+                                overflowY: "hidden",
+                                width: "100%",
+                            }}
+                        >
+                            {!isLoading ? (
+                                leads?.length > 0 ? (
+                                    <table
+                                        ref={tableRef}
+                                        className="text-sm text-left rtl:text-right text-gray-500"
+                                    >
+                                        <thead className="text-center text-gray-700 uppercase bg-gray-200">
+                                            <tr>
                                                 <th
-                                                    scope="row"
-                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                                                    scope="col"
+                                                    className="px-6 py-3"
                                                 >
-                                                    {i + 1}
+                                                    Sr. No.
                                                 </th>
-                                                <td className="px-6 py-4 flex flex-col gap-1 items-center">
-                                                    <button
-                                                        onClick={() => {
-                                                            setShow({
-                                                                edit: true,
-                                                                delete: false,
-                                                                view: false,
-                                                            });
-
-                                                            setDetail(item);
-                                                        }}
-                                                        className="font-medium text-white bg-green-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                    >
-                                                        <MdEdit />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setDetail(item);
-                                                            setShow({
-                                                                edit: false,
-                                                                delete: false,
-                                                                view: true,
-                                                            });
-                                                        }}
-                                                        className="font-medium text-white bg-blue-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                    >
-                                                        <FaEye />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setId(item?.id);
-                                                            setShow({
-                                                                edit: false,
-                                                                delete: true,
-                                                                view: false,
-                                                            });
-                                                        }}
-                                                        className="font-medium text-white bg-red-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                    >
-                                                        <MdDelete />
-                                                    </button>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <p
-                                                        className={`${
-                                                            item?.status?.name?.toLowerCase() ===
-                                                            "success"
-                                                                ? "bg-green-500"
-                                                                : ""
-                                                        } ${
-                                                            item?.status?.name?.toLowerCase() ===
-                                                            "pending"
-                                                                ? "bg-yellow-500"
-                                                                : ""
-                                                        } ${
-                                                            item?.status?.name?.toLowerCase() ===
-                                                            "cancelled"
-                                                                ? "bg-red-500"
-                                                                : ""
-                                                        } ${
-                                                            item?.status?.name?.toLowerCase() ===
-                                                            "rework/warmup"
-                                                                ? "bg-sky-500"
-                                                                : ""
-                                                        } px-3 py-1 text-xs rounded font-semibold text-white`}
-                                                    >
-                                                        {item?.status?.name}
-                                                    </p>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {new Date(
-                                                        item?.saleDate
-                                                    ).toDateString()}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {item?.leadBy?.name}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {item?.closer?.name}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {item?.verifier?.name}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {item?.title}{" "}
-                                                    {item?.firstName}{" "}
-                                                    {item?.middleName}{" "}
-                                                    {item?.lastName}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {item?.phone}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {item?.process?.name}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {item?.plan?.name}
-                                                </td>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Actions
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    status
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Sale Date
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Lead By
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Closed By
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Verified By
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Name
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Phone
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Process
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    className="px-6 py-3"
+                                                >
+                                                    Plan
+                                                </th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+
+                                        <tbody>
+                                            {leads?.map(
+                                                (item: any, i: number) => (
+                                                    <tr
+                                                        key={item?.id}
+                                                        className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                    >
+                                                        <th
+                                                            scope="row"
+                                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                                                        >
+                                                            {i + 1}
+                                                        </th>
+                                                        <td className="px-6 py-4 flex flex-col gap-1 items-center">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setShow({
+                                                                        edit: true,
+                                                                        delete: false,
+                                                                        view: false,
+                                                                    });
+
+                                                                    setDetail(
+                                                                        item
+                                                                    );
+                                                                }}
+                                                                className="font-medium text-white bg-green-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                            >
+                                                                <MdEdit />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setDetail(
+                                                                        item
+                                                                    );
+                                                                    setShow({
+                                                                        edit: false,
+                                                                        delete: false,
+                                                                        view: true,
+                                                                    });
+                                                                }}
+                                                                className="font-medium text-white bg-blue-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                            >
+                                                                <FaEye />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setId(
+                                                                        item?.id
+                                                                    );
+                                                                    setShow({
+                                                                        edit: false,
+                                                                        delete: true,
+                                                                        view: false,
+                                                                    });
+                                                                }}
+                                                                className="font-medium text-white bg-red-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                            >
+                                                                <MdDelete />
+                                                            </button>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                            <p
+                                                                className={`${
+                                                                    item?.status?.name?.toLowerCase() ===
+                                                                    "success"
+                                                                        ? "bg-green-500"
+                                                                        : ""
+                                                                } ${
+                                                                    item?.status?.name?.toLowerCase() ===
+                                                                    "pending"
+                                                                        ? "bg-yellow-500"
+                                                                        : ""
+                                                                } ${
+                                                                    item?.status?.name?.toLowerCase() ===
+                                                                    "cancelled"
+                                                                        ? "bg-red-500"
+                                                                        : ""
+                                                                } ${
+                                                                    item?.status?.name?.toLowerCase() ===
+                                                                    "rework/warmup"
+                                                                        ? "bg-sky-500"
+                                                                        : ""
+                                                                } px-3 py-1 text-xs rounded font-semibold text-white`}
+                                                            >
+                                                                {
+                                                                    item?.status
+                                                                        ?.name
+                                                                }
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                            {new Date(
+                                                                item?.saleDate
+                                                            ).toDateString()}
+                                                        </td>
+                                                        <td className="px-6 py-4 uppercase">
+                                                            {
+                                                                item?.leadBy
+                                                                    ?.alias
+                                                            }
+                                                        </td>
+                                                        <td className="px-6 py-4 uppercase">
+                                                            {
+                                                                item?.closer
+                                                                    ?.alias
+                                                            }
+                                                        </td>
+                                                        <td className="px-6 py-4 uppercase">
+                                                            {
+                                                                item?.verifier
+                                                                    ?.alias
+                                                            }
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                            {item?.title}{" "}
+                                                            {item?.firstName}{" "}
+                                                            {item?.middleName}{" "}
+                                                            {item?.lastName}
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            {item?.phone}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                            {
+                                                                item?.process
+                                                                    ?.name
+                                                            }
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                            {item?.plan?.name}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <EmptyState />
+                                )
                             ) : (
-                                <EmptyState />
-                            )
-                        ) : (
-                            <Loader />
-                        )}
+                                <Loader />
+                            )}
+                        </div>
                     </motion.div>
                 </div>
             </div>

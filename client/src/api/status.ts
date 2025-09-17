@@ -3,15 +3,10 @@ import { SERVER_URL } from "../constants/apiConstant";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axiosInstance";
 
-// SUPERADMIN
-export const createStatus = async (formData: any) => {
+// COMMON
+export const getAllStatus = async () => {
     try {
-        const { data } = await axiosInstance.post(
-            `${SERVER_URL}/superadmin/status`,
-            {
-                ...formData,
-            }
-        );
+        const { data } = await axiosInstance.get(`/status`);
         return data;
     } catch (error) {
         console.log(error);
@@ -23,10 +18,13 @@ export const createStatus = async (formData: any) => {
 };
 
 // SUPERADMIN
-export const getAllStatus = async () => {
+export const createStatus = async (formData: any) => {
     try {
-        const { data } = await axiosInstance.get(
-            `${SERVER_URL}/superadmin/status`
+        const { data } = await axiosInstance.post(
+            `${SERVER_URL}/superadmin/status`,
+            {
+                ...formData,
+            }
         );
         return data;
     } catch (error) {

@@ -153,7 +153,7 @@ var updateUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
         switch (_b.label) {
             case 0:
                 id = req.params.id;
-                console.log(req.body);
+                console.log("body", req.body.block);
                 _a = req.body, name = _a.name, alias = _a.alias, email = _a.email, employeeId = _a.employeeId, phone = _a.phone, password = _a.password, block = _a.block, role = _a.role, process = _a.process;
                 _b.label = 1;
             case 1:
@@ -178,7 +178,7 @@ var updateUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             employeeId: employeeId,
                             phone: phone,
                             role: role,
-                            isBlocked: block === 1 ? true : false,
+                            isBlocked: +block === 1 ? true : false,
                             alias: alias,
                             processId: process ? parseInt(process) : client_1.Prisma.skip,
                         },

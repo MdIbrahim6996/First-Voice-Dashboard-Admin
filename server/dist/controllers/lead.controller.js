@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,16 +53,17 @@ var client_1 = require("@prisma/client");
 var pusher_1 = require("../lib/pusher");
 var cache_1 = require("../lib/cache");
 var createLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, firstName, middleName, lastName, centre, address, city, county, pincode, password, dateOfBirth, phone, process, plan, poa, closer, verifier, bank, paymentMethod, shift, comment, card, date, status_1, lead, dailyLeadCount, error_1;
+    var _a, title, firstName, middleName, lastName, centre, address, city, county, pincode, password, dateOfBirth, phone, process, plan, poa, closer, verifier, bank, paymentMethod, shift, comment, card, appliances, date, status_1, lead_1, appliancesArray, dailyLeadCount, error_1;
     var _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, centre = _a.centre, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, password = _a.password, dateOfBirth = _a.dateOfBirth, phone = _a.phone, process = _a.process, plan = _a.plan, poa = _a.poa, closer = _a.closer, verifier = _a.verifier, bank = _a.bank, paymentMethod = _a.paymentMethod, shift = _a.shift, comment = _a.comment, card = _a.card;
+                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, centre = _a.centre, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, password = _a.password, dateOfBirth = _a.dateOfBirth, phone = _a.phone, process = _a.process, plan = _a.plan, poa = _a.poa, closer = _a.closer, verifier = _a.verifier, bank = _a.bank, paymentMethod = _a.paymentMethod, shift = _a.shift, comment = _a.comment, card = _a.card, appliances = _a.appliances;
                 date = new Date();
+                console.log(req.body);
                 _c.label = 1;
             case 1:
-                _c.trys.push([1, 5, , 6]);
+                _c.trys.push([1, 7, , 8]);
                 return [4 /*yield*/, prismaClient_1.prisma.status.findFirst({
                         where: { name: "pending" },
                     })];
@@ -100,36 +112,42 @@ var createLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                         include: { status: { select: { name: true } } },
                     })];
             case 3:
-                lead = _c.sent();
-                return [4 /*yield*/, prismaClient_1.prisma.leadCount.upsert({
-                        where: {
-                            userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
-                            uniqueDate: {
-                                date: date.getDate(),
-                                month: date.getMonth() + 1,
-                                year: date.getFullYear() - 1,
-                                userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
-                            },
-                        },
-                        create: {
-                            userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
-                            count: 1,
+                lead_1 = _c.sent();
+                appliancesArray = appliances.map(function (item, i) { return (__assign(__assign({}, item), { age: +(item === null || item === void 0 ? void 0 : item.age), leadId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.id })); });
+                if (!(appliances && appliances.length > 0)) return [3 /*break*/, 5];
+                return [4 /*yield*/, prismaClient_1.prisma.appliance.createMany({ data: appliancesArray })];
+            case 4:
+                _c.sent();
+                _c.label = 5;
+            case 5: return [4 /*yield*/, prismaClient_1.prisma.leadCount.upsert({
+                    where: {
+                        userId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.leadByUserId,
+                        uniqueDate: {
                             date: date.getDate(),
                             month: date.getMonth() + 1,
                             year: date.getFullYear() - 1,
+                            userId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.leadByUserId,
                         },
-                        update: { count: { increment: 1 } },
-                    })];
-            case 4:
+                    },
+                    create: {
+                        userId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.leadByUserId,
+                        count: 1,
+                        date: date.getDate(),
+                        month: date.getMonth() + 1,
+                        year: date.getFullYear() - 1,
+                    },
+                    update: { count: { increment: 1 } },
+                })];
+            case 6:
                 dailyLeadCount = _c.sent();
-                res.send(lead);
-                return [3 /*break*/, 6];
-            case 5:
+                res.send(lead_1);
+                return [3 /*break*/, 8];
+            case 7:
                 error_1 = _c.sent();
                 console.log(error_1);
                 next(error_1);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };
@@ -150,9 +168,9 @@ var getAllLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                         include: {
                             process: { select: { name: true } },
                             plan: { select: { name: true } },
-                            closer: { select: { name: true } },
-                            leadBy: { select: { name: true } },
-                            verifier: { select: { name: true } },
+                            closer: { select: { name: true, alias: true } },
+                            leadBy: { select: { name: true, alias: true } },
+                            verifier: { select: { name: true, alias: true } },
                             status: { select: { name: true } },
                             StatusChangeReason: true,
                         },

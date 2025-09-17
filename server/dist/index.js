@@ -13,7 +13,7 @@ var routes_1 = __importDefault(require("./routes"));
 var errorMiddleware_1 = require("./middlewares/errorMiddleware");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://first-voice-dashboard-admin.onrender.com"],
     credentials: true,
     optionsSuccessStatus: 200,
 }));
@@ -23,7 +23,6 @@ app.use((0, cookie_parser_1.default)());
 app.use((0, morgan_1.default)("dev"));
 app.use((0, compression_1.default)());
 app.use("/api/v1", routes_1.default);
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "production") {
     app.use(express_1.default.static(path_1.default.join(path_1.default.resolve(), "../client", "dist")));
     app.get("/{*any}", function (req, res) {

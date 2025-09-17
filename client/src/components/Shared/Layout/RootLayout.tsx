@@ -41,21 +41,41 @@ const RootLayout = () => {
     } = useQuery({
         queryKey: ["user-detail"],
         queryFn: getUserDetail,
+        refetchInterval: 5 * 1000, // 10s in
     });
-    console.log("userdetail", userDetail);
 
     if (isSuccess) {
-        setUser(userDetail);
-        localStorage.setItem("authUser", JSON.stringify(userDetail));
+        // if (userDetail?.status === 401) {
+        //     setUser(null);
+        //     localStorage.removeItem("authUser");
+        // }
+        if (userDetail?.id) {
+            setUser(userDetail);
+            localStorage.setItem("authUser", JSON.stringify(userDetail));
+        }
     }
 
     useEffect(() => {
         refetch();
     }, []);
+
     useEffect(() => {
+        if (!user) navigate("/login");
         if (user?.role === "admin") navigate("/admin");
         else if (user?.role === "superadmin") navigate("/superadmin");
-    }, []);
+    }, [user]);
+    // console.log(user);
+
+    if (isSuccess) {
+        if (userDetail?.status === 401) {
+            setUser(null);
+            localStorage.removeItem("authUser");
+        }
+        // if (userDetail?.id) {
+        //     setUser(userDetail);
+        //     localStorage.setItem("authUser", JSON.stringify(userDetail));
+        // }
+    }
     return (
         <>
             <ErrorBoundary FallbackComponent={() => <FallbackRenderer />}>

@@ -66,8 +66,10 @@ export const createLead = async (
         shift,
         comment,
         card,
+        appliances,
     } = req.body;
     const date = new Date();
+    console.log(req.body);
 
     try {
         const status = await prisma.status.findFirst({
@@ -117,6 +119,16 @@ export const createLead = async (
             },
             include: { status: { select: { name: true } } },
         });
+
+        const appliancesArray = appliances.map((item: any, i: number) => ({
+            ...item,
+            age: +item?.age,
+            leadId: lead?.id,
+        }));
+
+        if (appliances && appliances.length > 0) {
+            await prisma.appliance.createMany({ data: appliancesArray });
+        }
 
         const dailyLeadCount = await prisma.leadCount.upsert({
             where: {
@@ -170,9 +182,9 @@ export const getAllLead = async (
             include: {
                 process: { select: { name: true } },
                 plan: { select: { name: true } },
-                closer: { select: { name: true } },
-                leadBy: { select: { name: true } },
-                verifier: { select: { name: true } },
+                closer: { select: { name: true, alias: true } },
+                leadBy: { select: { name: true, alias: true } },
+                verifier: { select: { name: true, alias: true } },
                 status: { select: { name: true } },
                 StatusChangeReason: true,
             },

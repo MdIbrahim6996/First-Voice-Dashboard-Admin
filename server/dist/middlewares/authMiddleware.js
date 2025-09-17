@@ -42,6 +42,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAuth = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var appConstants_1 = require("../utils/appConstants");
 var isAuth = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var token, id, user, error_1;
     return __generator(this, function (_a) {
@@ -53,7 +54,7 @@ var isAuth = function (req, res, next) { return __awaiter(void 0, void 0, void 0
                     res.status(401);
                     throw new Error("Token expired login again.");
                 }
-                id = jsonwebtoken_1.default.verify(token, "fsdfsdf").id;
+                id = jsonwebtoken_1.default.verify(token, appConstants_1.JWT_SECRET).id;
                 if (!id) return [3 /*break*/, 2];
                 return [4 /*yield*/, prismaClient_1.prisma.user.findUnique({
                         where: { id: parseInt(id) },

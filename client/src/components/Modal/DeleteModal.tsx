@@ -9,12 +9,16 @@ const DeleteModal = ({
     handleDelete: () => void;
 }) => {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/60 z-50"
+            onClick={handleClose}
+        >
             <motion.div
                 initial={{ opacity: 0.5, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 text-center"
+                onClick={(e) => e.stopPropagation()} // <-- STOP click from reaching overlay
             >
                 <div className="flex justify-center mb-4">
                     <div className="bg-red-100 p-3 rounded-full">

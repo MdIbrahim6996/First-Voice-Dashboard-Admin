@@ -24,11 +24,12 @@ const CreateUserModal = ({ handleClose }: { handleClose: () => void }) => {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<Inputs>();
 
     const [showPassword, setShowPassword] = useState(false);
-
+    const roleValue = watch("role");
     const queryClient = useQueryClient();
 
     const { data: process } = useQuery({
@@ -53,12 +54,16 @@ const CreateUserModal = ({ handleClose }: { handleClose: () => void }) => {
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/60 z-50"
+            onClick={handleClose}
+        >
             <motion.div
                 initial={{ opacity: 0.5, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="bg-white rounded-lg shadow-lg w-full max-w-xl overflow-y-scroll max-h-[90vh]"
+                onClick={(e) => e.stopPropagation()} // <-- STOP click from reaching overlay
             >
                 <div className="">
                     <p className="bg-gray-200 py-2 px-6 text-xl">
@@ -191,6 +196,7 @@ const CreateUserModal = ({ handleClose }: { handleClose: () => void }) => {
                             <option value="superadmin">SUPERADMIN</option>
                             <option value="user">USER</option>
                             <option value="closer">CLOSER</option>
+                            <option value="verifier">VERIFIER</option>
                         </select>
                         {errors.role && (
                             <p className="text-red-500 text-sm">
@@ -205,12 +211,32 @@ const CreateUserModal = ({ handleClose }: { handleClose: () => void }) => {
                         >
                             Process
                         </label>
+
+                        {/* <Select
+                            options={process.map((item: any) => ({
+                                value: item?.id,
+                                label: item?.name,
+                            }))}
+                            isMulti={
+                                roleValue === "closer" ||
+                                roleValue === "verifier"
+                            }
+                            {...register("process", {
+                                required: "Please Select a Process.",
+                            })}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                        /> */}
                         <select
                             id="process"
                             {...register("process", {
                                 required: "Please Select a Process.",
                             })}
                             className="w-full border border-gray-400 px-2 py-1 rounded-md outline-none"
+                            multiple={
+                                roleValue === "closer" ||
+                                roleValue === "verifier"
+                            }
                         >
                             <option value="" selected disabled>
                                 Select a Process
@@ -221,6 +247,7 @@ const CreateUserModal = ({ handleClose }: { handleClose: () => void }) => {
                                 </option>
                             ))}
                         </select>
+
                         {errors.process && (
                             <p className="text-red-500 text-sm">
                                 {errors?.process?.message}

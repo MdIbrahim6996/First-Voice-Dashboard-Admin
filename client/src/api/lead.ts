@@ -3,11 +3,37 @@ import { SERVER_URL } from "../constants/apiConstant";
 import { axiosInstance } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
 
+//COMMON
+export const getAllLead = async (
+    status: number,
+    phone: string,
+    process: number,
+    leadUser: number,
+    closerUser: number,
+    verifierUser: number,
+    saleDate: string,
+    fromDate: string,
+    toDate: string
+) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `/lead?status=${status}&phone=${phone}&process=${process}&leadUser=${leadUser}&closerUser=${closerUser}&verifierUser=${verifierUser}&saleDate=${saleDate}&fromDate=${fromDate}&toDate=${toDate}`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
+
 //SUPERADMIN
-export const createSuperAdminLead = async (formData: any) => {
+export const createLead = async (formData: any) => {
     try {
         const { data } = await axiosInstance.post(
-            `${SERVER_URL}/superadmin/lead`,
+            `/lead`,
             {
                 ...formData,
             }
@@ -44,31 +70,6 @@ export const deleteLead = async (id: number) => {
     try {
         const { data } = await axiosInstance.delete(
             `${SERVER_URL}/superadmin/lead/${id}`
-        );
-        return data;
-    } catch (error) {
-        console.log(error);
-        if (axios.isAxiosError(error)) {
-            toast.error(error?.response?.data?.message);
-        }
-        return error;
-    }
-};
-//SUPERADMIN
-export const getAllLead = async (
-    status: number,
-    phone: string,
-    process: number,
-    leadUser: number,
-    closerUser: number,
-    verifierUser: number,
-    saleDate: string,
-    fromDate: string,
-    toDate: string
-) => {
-    try {
-        const { data } = await axiosInstance.get(
-            `${SERVER_URL}/superadmin/lead?status=${status}&phone=${phone}&process=${process}&leadUser=${leadUser}&closerUser=${closerUser}&verifierUser=${verifierUser}&saleDate=${saleDate}&fromDate=${fromDate}&toDate=${toDate}`
         );
         return data;
     } catch (error) {

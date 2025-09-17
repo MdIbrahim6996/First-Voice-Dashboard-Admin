@@ -34,12 +34,16 @@ const CreateStatus = ({ handleClose }: { handleClose: () => void }) => {
         createMutation.mutate(data);
     };
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+        <div
+            className="fixed inset-0 flex items-center justify-center bg-black/60 z-50"
+            onClick={handleClose}
+        >
             <motion.div
                 initial={{ opacity: 0.5, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="bg-white rounded-lg shadow-lg w-full max-w-xl  overflow-hidden"
+                onClick={(e) => e.stopPropagation()} // <-- STOP click from reaching overlay
             >
                 <div className="">
                     <p className="bg-gray-200 py-2 px-6 text-xl">

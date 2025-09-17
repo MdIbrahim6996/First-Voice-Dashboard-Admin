@@ -1,12 +1,9 @@
 import {
-    MdDashboard,
     MdSpaceDashboard,
     MdPerson,
     MdList,
     MdWorkspacePremium,
-    MdCalendarMonth,
 } from "react-icons/md";
-import { IoBookSharp } from "react-icons/io5";
 import { RiFileAddFill, RiBook2Fill } from "react-icons/ri";
 import { BsCalendar2EventFill } from "react-icons/bs";
 
@@ -29,24 +26,24 @@ export const monthNames = [
 ];
 
 export const adminLinks = [
-    {
-        id: 1,
-        title: "Dashboard",
-        link: "/admin/dashboard",
-        icon: <MdDashboard className="text-xl" />,
-    },
+    // {
+    //     id: 1,
+    //     title: "Dashboard",
+    //     link: "/admin/dashboard",
+    //     icon: <MdDashboard className="text-xl" />,
+    // },
     {
         id: 2,
         title: "MainDashboard",
         link: "/admin/main-dashboard",
         icon: <MdSpaceDashboard className="text-xl" />,
     },
-    {
-        id: 3,
-        title: "Attendance",
-        link: "/admin/attendance",
-        icon: <IoBookSharp className="text-xl" />,
-    },
+    // {
+    //     id: 3,
+    //     title: "Attendance",
+    //     link: "/admin/attendance",
+    //     icon: <IoBookSharp className="text-xl" />,
+    // },
     {
         id: 4,
         title: "Add Lead",
@@ -59,18 +56,18 @@ export const adminLinks = [
         link: "/admin/leads",
         icon: <MdList className="text-xl" />,
     },
-    {
-        id: 6,
-        title: "Holiday-Calendar",
-        link: "/admin/holiday-calendar",
-        icon: <MdCalendarMonth className="text-xl" />,
-    },
-    {
-        id: 7,
-        title: "Profile",
-        link: "/admin/profile",
-        icon: <MdPerson className="text-xl" />,
-    },
+    // {
+    //     id: 6,
+    //     title: "Holiday-Calendar",
+    //     link: "/admin/holiday-calendar",
+    //     icon: <MdCalendarMonth className="text-xl" />,
+    // },
+    // {
+    //     id: 7,
+    //     title: "Profile",
+    //     link: "/admin/profile",
+    //     icon: <MdPerson className="text-xl" />,
+    // },
 ];
 export const superAdminLinks = [
     // {

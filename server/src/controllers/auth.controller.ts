@@ -75,6 +75,7 @@ export const loginController = async (
                     httpOnly: true,
                     secure: true,
                     maxAge: 12 * 60 * 60 * 1000,
+                    // maxAge: 20 * 1000,
                 })
                 .send({ user: userData });
         } else {

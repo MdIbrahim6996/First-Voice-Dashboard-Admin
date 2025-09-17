@@ -128,6 +128,7 @@ var loginController = function (req, res, next) { return __awaiter(void 0, void 
                             httpOnly: true,
                             secure: true,
                             maxAge: 12 * 60 * 60 * 1000,
+                            // maxAge: 20 * 1000,
                         })
                             .send({ user: userData })];
                 }
