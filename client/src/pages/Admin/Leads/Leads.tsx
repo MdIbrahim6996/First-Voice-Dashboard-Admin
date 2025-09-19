@@ -57,7 +57,7 @@ const Leads = () => {
     });
 
     const [page, setPage] = useState(1);
-    const limit = 3;
+    const limit = 30;
 
     const queryClient = useQueryClient();
 
