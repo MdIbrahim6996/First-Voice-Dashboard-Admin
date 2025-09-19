@@ -56,6 +56,9 @@ const Leads = () => {
         view: false,
     });
 
+    const [page, setPage] = useState(1);
+    const limit = 3;
+
     const queryClient = useQueryClient();
 
     const { data: processData } = useQuery({
@@ -78,12 +81,8 @@ const Leads = () => {
         queryFn: getAllStatus,
     });
 
-    const {
-        data: leads,
-        refetch,
-        isLoading,
-    } = useQuery({
-        queryKey: ["leads", status],
+    const { data, refetch, isLoading, isFetching } = useQuery({
+        queryKey: ["leads", status, page],
         queryFn: () =>
             getAllLead(
                 status,
@@ -94,9 +93,19 @@ const Leads = () => {
                 verifierUser,
                 saleDate,
                 fromDate,
-                toDate
+                toDate,
+                page,
+                limit
             ),
+        placeholderData: true,
     });
+
+    const leads = data?.leads;
+
+    const pagesArray = Array.from(
+        { length: data?.totalPages },
+        (_, i) => i + 1
+    );
 
     const { mutate } = useMutation({
         mutationFn: (id: number) => deleteLead(id),
@@ -490,228 +499,240 @@ const Leads = () => {
                                 width: "100%",
                             }}
                         >
-                            {!isLoading ? (
-                                leads?.length > 0 ? (
-                                    <table
-                                        ref={tableRef}
-                                        className="text-sm text-left rtl:text-right text-gray-500"
-                                    >
-                                        <thead className="text-center text-gray-700 uppercase bg-gray-200">
-                                            <tr>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Sr. No.
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Actions
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    status
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Sale Date
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Lead By
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Closed By
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Verified By
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Name
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Phone
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Process
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-6 py-3"
-                                                >
-                                                    Plan
-                                                </th>
-                                            </tr>
-                                        </thead>
+                            {/* {isFetching && <Loader />} */}
+                            {(isLoading || isFetching) && <Loader />}
 
-                                        <tbody>
-                                            {leads?.map(
-                                                (item: any, i: number) => (
-                                                    <tr
-                                                        key={item?.id}
-                                                        className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                            {leads?.length > 0 && !isFetching && (
+                                <table
+                                    ref={tableRef}
+                                    className="text-sm text-left rtl:text-right text-gray-500"
+                                >
+                                    <thead className="text-center text-gray-700 uppercase bg-gray-200">
+                                        <tr>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Sr. No.
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Actions
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                status
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Sale Date
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Lead By
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Closed By
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Verified By
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Name
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Phone
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Process
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3"
+                                            >
+                                                Plan
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {leads?.map((item: any, i: number) => (
+                                            <tr
+                                                key={item?.id}
+                                                className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                            >
+                                                <th
+                                                    scope="row"
+                                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                                                >
+                                                    {i + 1}
+                                                </th>
+                                                <td className="px-6 py-4 flex flex-col gap-1 items-center">
+                                                    <button
+                                                        onClick={() => {
+                                                            setShow({
+                                                                edit: true,
+                                                                delete: false,
+                                                                view: false,
+                                                            });
+
+                                                            setDetail(item);
+                                                        }}
+                                                        className="font-medium text-white bg-green-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
                                                     >
-                                                        <th
-                                                            scope="row"
-                                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
-                                                        >
-                                                            {i + 1}
-                                                        </th>
-                                                        <td className="px-6 py-4 flex flex-col gap-1 items-center">
-                                                            <button
-                                                                onClick={() => {
-                                                                    setShow({
-                                                                        edit: true,
-                                                                        delete: false,
-                                                                        view: false,
-                                                                    });
-
-                                                                    setDetail(
-                                                                        item
-                                                                    );
-                                                                }}
-                                                                className="font-medium text-white bg-green-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                            >
-                                                                <MdEdit />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setDetail(
-                                                                        item
-                                                                    );
-                                                                    setShow({
-                                                                        edit: false,
-                                                                        delete: false,
-                                                                        view: true,
-                                                                    });
-                                                                }}
-                                                                className="font-medium text-white bg-blue-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                            >
-                                                                <FaEye />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setId(
-                                                                        item?.id
-                                                                    );
-                                                                    setShow({
-                                                                        edit: false,
-                                                                        delete: true,
-                                                                        view: false,
-                                                                    });
-                                                                }}
-                                                                className="font-medium text-white bg-red-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
-                                                            >
-                                                                <MdDelete />
-                                                            </button>
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <p
-                                                                className={`${
-                                                                    item?.status?.name?.toLowerCase() ===
-                                                                    "success"
-                                                                        ? "bg-green-500"
-                                                                        : ""
-                                                                } ${
-                                                                    item?.status?.name?.toLowerCase() ===
-                                                                    "pending"
-                                                                        ? "bg-yellow-500"
-                                                                        : ""
-                                                                } ${
-                                                                    item?.status?.name?.toLowerCase() ===
-                                                                    "cancelled"
-                                                                        ? "bg-red-500"
-                                                                        : ""
-                                                                } ${
-                                                                    item?.status?.name?.toLowerCase() ===
-                                                                    "rework/warmup"
-                                                                        ? "bg-sky-500"
-                                                                        : ""
-                                                                } px-3 py-1 text-xs rounded font-semibold text-white`}
-                                                            >
-                                                                {
-                                                                    item?.status
-                                                                        ?.name
-                                                                }
-                                                            </p>
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                            {new Date(
-                                                                item?.saleDate
-                                                            ).toDateString()}
-                                                        </td>
-                                                        <td className="px-6 py-4 uppercase">
-                                                            {
-                                                                item?.leadBy
-                                                                    ?.alias
-                                                            }
-                                                        </td>
-                                                        <td className="px-6 py-4 uppercase">
-                                                            {
-                                                                item?.closer
-                                                                    ?.alias
-                                                            }
-                                                        </td>
-                                                        <td className="px-6 py-4 uppercase">
-                                                            {
-                                                                item?.verifier
-                                                                    ?.alias
-                                                            }
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                            {item?.title}{" "}
-                                                            {item?.firstName}{" "}
-                                                            {item?.middleName}{" "}
-                                                            {item?.lastName}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            {item?.phone}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                            {
-                                                                item?.process
-                                                                    ?.name
-                                                            }
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                            {item?.plan?.name}
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                ) : (
-                                    <EmptyState />
-                                )
-                            ) : (
-                                <Loader />
+                                                        <MdEdit />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setDetail(item);
+                                                            setShow({
+                                                                edit: false,
+                                                                delete: false,
+                                                                view: true,
+                                                            });
+                                                        }}
+                                                        className="font-medium text-white bg-blue-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                    >
+                                                        <FaEye />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setId(item?.id);
+                                                            setShow({
+                                                                edit: false,
+                                                                delete: true,
+                                                                view: false,
+                                                            });
+                                                        }}
+                                                        className="font-medium text-white bg-red-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                    >
+                                                        <MdDelete />
+                                                    </button>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <p
+                                                        className={`${
+                                                            item?.status?.name?.toLowerCase() ===
+                                                            "success"
+                                                                ? "bg-green-500"
+                                                                : ""
+                                                        } ${
+                                                            item?.status?.name?.toLowerCase() ===
+                                                            "pending"
+                                                                ? "bg-yellow-500"
+                                                                : ""
+                                                        } ${
+                                                            item?.status?.name?.toLowerCase() ===
+                                                            "cancelled"
+                                                                ? "bg-red-500"
+                                                                : ""
+                                                        } ${
+                                                            item?.status?.name?.toLowerCase() ===
+                                                            "rework/warmup"
+                                                                ? "bg-sky-500"
+                                                                : ""
+                                                        } px-3 py-1 text-xs rounded font-semibold text-white`}
+                                                    >
+                                                        {item?.status?.name}
+                                                    </p>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                    {new Date(
+                                                        item?.saleDate
+                                                    ).toDateString()}
+                                                </td>
+                                                <td className="px-6 py-4 uppercase">
+                                                    {item?.leadBy?.alias}
+                                                </td>
+                                                <td className="px-6 py-4 uppercase">
+                                                    {item?.closer?.alias}
+                                                </td>
+                                                <td className="px-6 py-4 uppercase">
+                                                    {item?.verifier?.alias}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowra uppercase">
+                                                    {item?.title}{" "}
+                                                    {item?.firstName}{" "}
+                                                    {item?.middleName}{" "}
+                                                    {item?.lastName}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {item?.phone}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                    {item?.process?.name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                    {item?.plan?.name}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             )}
+                            {(!leads || leads.length === 0) && <EmptyState />}
                         </div>
                     </motion.div>
+
+                    {/* PAGINATION */}
+                    {leads?.length > 0 && (
+                        <div className="flex gap-2 mt-4 items-center w-fit mx-auto">
+                            <button
+                                disabled={page === 1}
+                                onClick={() =>
+                                    setPage((old) => Math.max(old - 1, 1))
+                                }
+                                className="bg-red-500 text-white text-xs font-semibold px-6 py-1 rounded-md capitalize cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                Prev
+                            </button>
+
+                            {pagesArray?.map((p) => (
+                                <button
+                                    key={p}
+                                    onClick={() => setPage(p)}
+                                    className={`text-xs font-semibold  px-6 py-1 rounded-md capitalize cursor-pointer ${
+                                        p === page
+                                            ? "bg-sky-500 text-white"
+                                            : "bg-white text-black border border-slate-400"
+                                    }`}
+                                >
+                                    {p}
+                                </button>
+                            ))}
+
+                            <button
+                                disabled={page === data?.totalPages}
+                                onClick={() => setPage((old) => old + 1)}
+                                className="bg-blue-700 text-white text-xs font-semibold px-6 py-1 rounded-md capitalize cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 

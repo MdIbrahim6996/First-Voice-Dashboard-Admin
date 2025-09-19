@@ -5,6 +5,8 @@ import { pusher } from "../lib/pusher";
 import { groupBy } from "lodash";
 import { cache } from "../lib/cache";
 
+
+
 export const createLead = async (
     req: Request,
     res: Response,
@@ -173,50 +175,100 @@ export const getAllLead = async (
         toDate,
     } = req.query;
 
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
     try {
         const newSaleDate = new Date(saleDate as string);
         const nextDay = new Date(saleDate as string);
         nextDay.setDate(nextDay.getDate() + 1);
 
-        const leads = await prisma.lead.findMany({
-            include: {
-                process: { select: { name: true } },
-                plan: { select: { name: true } },
-                closer: { select: { name: true, alias: true } },
-                leadBy: { select: { name: true, alias: true } },
-                verifier: { select: { name: true, alias: true } },
-                status: { select: { name: true } },
-                StatusChangeReason: true,
-            },
-            where: {
-                statusId: parseInt(status as string)
-                    ? parseInt(status as string)
-                    : Prisma.skip,
-                phone: phone ? (phone as string) : Prisma.skip,
-                processId: parseInt(process as string)
-                    ? parseInt(process as string)
-                    : Prisma.skip,
-                leadByUserId: parseInt(leadUser as string)
-                    ? parseInt(leadUser as string)
-                    : Prisma.skip,
-                closerId: parseInt(closerUser as string)
-                    ? parseInt(closerUser as string)
-                    : Prisma.skip,
-                verifierId: parseInt(verifierUser as string)
-                    ? parseInt(verifierUser as string)
-                    : Prisma.skip,
-                saleDate: {
-                    gte: saleDate ? newSaleDate : Prisma.skip,
-                    lt: saleDate ? nextDay : Prisma.skip,
+        // const leads = await prisma.lead.findMany({
+        //     include: {
+        //         process: { select: { name: true } },
+        //         plan: { select: { name: true } },
+        //         closer: { select: { name: true, alias: true } },
+        //         leadBy: { select: { name: true, alias: true } },
+        //         verifier: { select: { name: true, alias: true } },
+        //         status: { select: { name: true } },
+        //         StatusChangeReason: true,
+        //     },
+        //     where: {
+        //         statusId: parseInt(status as string)
+        //             ? parseInt(status as string)
+        //             : Prisma.skip,
+        //         phone: phone ? (phone as string) : Prisma.skip,
+        //         processId: parseInt(process as string)
+        //             ? parseInt(process as string)
+        //             : Prisma.skip,
+        //         leadByUserId: parseInt(leadUser as string)
+        //             ? parseInt(leadUser as string)
+        //             : Prisma.skip,
+        //         closerId: parseInt(closerUser as string)
+        //             ? parseInt(closerUser as string)
+        //             : Prisma.skip,
+        //         verifierId: parseInt(verifierUser as string)
+        //             ? parseInt(verifierUser as string)
+        //             : Prisma.skip,
+        //         saleDate: {
+        //             gte: saleDate ? newSaleDate : Prisma.skip,
+        //             lt: saleDate ? nextDay : Prisma.skip,
+        //         },
+        //         createdAt: {
+        //             gte: fromDate ? new Date(fromDate as string) : Prisma.skip,
+        //             lte: toDate ? new Date(toDate as string) : Prisma.skip,
+        //         },
+        //     },
+        //     orderBy: { createdAt: "desc" },
+        // });
+
+        const [leads, total] = await Promise.all([
+            prisma.lead.findMany({
+                skip,
+                take: limit,
+                include: {
+                    process: { select: { name: true } },
+                    plan: { select: { name: true } },
+                    closer: { select: { name: true, alias: true } },
+                    leadBy: { select: { name: true, alias: true } },
+                    verifier: { select: { name: true, alias: true } },
+                    status: { select: { name: true } },
+                    StatusChangeReason: true,
                 },
-                createdAt: {
-                    gte: fromDate ? new Date(fromDate as string) : Prisma.skip,
-                    lte: toDate ? new Date(toDate as string) : Prisma.skip,
+                where: {
+                    statusId: parseInt(status as string)
+                        ? parseInt(status as string)
+                        : Prisma.skip,
+                    phone: phone ? (phone as string) : Prisma.skip,
+                    processId: parseInt(process as string)
+                        ? parseInt(process as string)
+                        : Prisma.skip,
+                    leadByUserId: parseInt(leadUser as string)
+                        ? parseInt(leadUser as string)
+                        : Prisma.skip,
+                    closerId: parseInt(closerUser as string)
+                        ? parseInt(closerUser as string)
+                        : Prisma.skip,
+                    verifierId: parseInt(verifierUser as string)
+                        ? parseInt(verifierUser as string)
+                        : Prisma.skip,
+                    saleDate: {
+                        gte: saleDate ? newSaleDate : Prisma.skip,
+                        lt: saleDate ? nextDay : Prisma.skip,
+                    },
+                    createdAt: {
+                        gte: fromDate
+                            ? new Date(fromDate as string)
+                            : Prisma.skip,
+                        lte: toDate ? new Date(toDate as string) : Prisma.skip,
+                    },
                 },
-            },
-            orderBy: { createdAt: "desc" },
-        });
-        res.send(leads);
+                orderBy: { createdAt: "desc" },
+            }),
+            prisma.lead.count(),
+        ]);
+        res.send({ leads, total, page, totalPages: Math.ceil(total / limit) });
     } catch (error) {
         console.log(error);
         next(error);
@@ -330,7 +382,12 @@ export const updateLead = async (
         dateOfBirth,
         status,
         reason,
+        //
+        comment,
+        password,
+        poa,
     } = req.body;
+    console.log(phone);
 
     try {
         let initialStatus = req?.body?.initialStatus as string;
@@ -349,12 +406,15 @@ export const updateLead = async (
                 city: city ? city : Prisma.skip,
                 county: county ? county : Prisma.skip,
                 pincode: pincode ? pincode : Prisma.skip,
+                password: password ? password : Prisma.skip,
+                phone: phone ? phone : Prisma.skip,
                 fee: fee ? fee : Prisma.skip,
                 currency: currency ? currency : Prisma.skip,
                 bankName: bankName ? bankName : Prisma.skip,
                 accountName: accountName ? accountName : Prisma.skip,
                 sort: sort ? sort : Prisma.skip,
-                phone: phone ? phone : Prisma.skip,
+                poa: poa ? (poa === "true" ? true : false) : Prisma.skip,
+                comment: comment ? comment : Prisma.skip,
             },
             include: {
                 status: { select: { name: true } },
@@ -382,20 +442,23 @@ export const updateLead = async (
             : `Lead created on ${new Date(
                   lead?.saleDate
               ).toDateString()} changed status from ${initialStatus?.toUpperCase()} to ${finalStatus?.toUpperCase()}`;
-        const notif = await prisma.notification.create({
-            data: {
-                type: "important",
-                content,
-                title: "lead status changed",
 
-                saleDate: lead?.saleDate,
-                userId: lead?.leadByUserId as number,
-            },
-        });
-        if (notif?.id) {
-            pusher.trigger("lead", `status-change-${lead?.leadByUserId}`, {
-                notif,
+        if (initialStatus !== finalStatus) {
+            const notif = await prisma.notification.create({
+                data: {
+                    type: "important",
+                    content,
+                    title: "lead status changed",
+
+                    saleDate: lead?.saleDate,
+                    userId: lead?.leadByUserId as number,
+                },
             });
+            if (notif?.id) {
+                pusher.trigger("lead", `status-change-${lead?.leadByUserId}`, {
+                    notif,
+                });
+            }
         }
 
         const cacheKey = `userprofile_${lead?.leadByUserId}`;

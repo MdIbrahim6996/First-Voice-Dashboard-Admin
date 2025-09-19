@@ -1,14 +1,25 @@
 import TopPerformer from "./elements/TopPerformer";
 import Carousel from "./elements/Carousel";
 import EnergyBoilers from "./elements/EnergyBoilers";
-import { getProcessLeadCount } from "../../api/mainDashboard";
+import { getDailySales } from "../../api/mainDashboard";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader/Loader";
+import { getAllProcess } from "../../api/process";
 
 const MainDashboard = () => {
-    const { data: processLeadCount = [], isLoading } = useQuery({
-        queryKey: ["process-lead-count"],
-        queryFn: getProcessLeadCount,
+    // const { data: processLeadCount = [], isLoading } = useQuery({
+    //     queryKey: ["process-lead-count"],
+    //     queryFn: getProcessLeadCount,
+    // });
+    const { data: process = [] } = useQuery({
+        queryKey: ["process"],
+        queryFn: getAllProcess,
+    });
+
+    const { data: dailySales = [], isLoading } = useQuery({
+        queryKey: ["dailySales"],
+        queryFn: getDailySales,
+        refetchInterval: 60 * 1000, //1 min
     });
 
     return (
@@ -16,8 +27,8 @@ const MainDashboard = () => {
             <Carousel>
                 <TopPerformer />
                 {!isLoading ? (
-                    processLeadCount?.map((item: any) => (
-                        <EnergyBoilers details={item} />
+                    process?.map((item: any) => (
+                        <EnergyBoilers details={item} sales={dailySales} />
                     ))
                 ) : (
                     <Loader />

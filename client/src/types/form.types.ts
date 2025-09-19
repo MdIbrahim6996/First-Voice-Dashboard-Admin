@@ -60,7 +60,7 @@ export type UpdateLeadsFormInput = {
     password: string;
     dateOfBirth: string;
     phone: string;
-    poa: boolean;
+    poa: string;
 
     process: number;
     plan: string;
@@ -87,4 +87,5 @@ export type UpdateLeadsFormInput = {
     accountName: string;
     accountNumber: string;
     sort: string;
+    comment: string;
 };

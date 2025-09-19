@@ -18,7 +18,7 @@ const Login = () => {
 
     useEffect(() => {
         if (user && user.id) navigate("/");
-    }, []);
+    }, [user]);
 
     const {
         register,

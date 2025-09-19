@@ -153,61 +153,71 @@ var createLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.createLead = createLead;
 var getAllLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, status, phone, process, leadUser, closerUser, verifierUser, saleDate, fromDate, toDate, newSaleDate, nextDay, leads, error_2;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, status, phone, process, leadUser, closerUser, verifierUser, saleDate, fromDate, toDate, page, limit, skip, newSaleDate, nextDay, _b, leads, total, error_2;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 _a = req.query, status = _a.status, phone = _a.phone, process = _a.process, leadUser = _a.leadUser, closerUser = _a.closerUser, verifierUser = _a.verifierUser, saleDate = _a.saleDate, fromDate = _a.fromDate, toDate = _a.toDate;
-                _b.label = 1;
+                page = parseInt(req.query.page) || 1;
+                limit = parseInt(req.query.limit) || 10;
+                skip = (page - 1) * limit;
+                _c.label = 1;
             case 1:
-                _b.trys.push([1, 3, , 4]);
+                _c.trys.push([1, 3, , 4]);
                 newSaleDate = new Date(saleDate);
                 nextDay = new Date(saleDate);
                 nextDay.setDate(nextDay.getDate() + 1);
-                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
-                        include: {
-                            process: { select: { name: true } },
-                            plan: { select: { name: true } },
-                            closer: { select: { name: true, alias: true } },
-                            leadBy: { select: { name: true, alias: true } },
-                            verifier: { select: { name: true, alias: true } },
-                            status: { select: { name: true } },
-                            StatusChangeReason: true,
-                        },
-                        where: {
-                            statusId: parseInt(status)
-                                ? parseInt(status)
-                                : client_1.Prisma.skip,
-                            phone: phone ? phone : client_1.Prisma.skip,
-                            processId: parseInt(process)
-                                ? parseInt(process)
-                                : client_1.Prisma.skip,
-                            leadByUserId: parseInt(leadUser)
-                                ? parseInt(leadUser)
-                                : client_1.Prisma.skip,
-                            closerId: parseInt(closerUser)
-                                ? parseInt(closerUser)
-                                : client_1.Prisma.skip,
-                            verifierId: parseInt(verifierUser)
-                                ? parseInt(verifierUser)
-                                : client_1.Prisma.skip,
-                            saleDate: {
-                                gte: saleDate ? newSaleDate : client_1.Prisma.skip,
-                                lt: saleDate ? nextDay : client_1.Prisma.skip,
+                return [4 /*yield*/, Promise.all([
+                        prismaClient_1.prisma.lead.findMany({
+                            skip: skip,
+                            take: limit,
+                            include: {
+                                process: { select: { name: true } },
+                                plan: { select: { name: true } },
+                                closer: { select: { name: true, alias: true } },
+                                leadBy: { select: { name: true, alias: true } },
+                                verifier: { select: { name: true, alias: true } },
+                                status: { select: { name: true } },
+                                StatusChangeReason: true,
                             },
-                            createdAt: {
-                                gte: fromDate ? new Date(fromDate) : client_1.Prisma.skip,
-                                lte: toDate ? new Date(toDate) : client_1.Prisma.skip,
+                            where: {
+                                statusId: parseInt(status)
+                                    ? parseInt(status)
+                                    : client_1.Prisma.skip,
+                                phone: phone ? phone : client_1.Prisma.skip,
+                                processId: parseInt(process)
+                                    ? parseInt(process)
+                                    : client_1.Prisma.skip,
+                                leadByUserId: parseInt(leadUser)
+                                    ? parseInt(leadUser)
+                                    : client_1.Prisma.skip,
+                                closerId: parseInt(closerUser)
+                                    ? parseInt(closerUser)
+                                    : client_1.Prisma.skip,
+                                verifierId: parseInt(verifierUser)
+                                    ? parseInt(verifierUser)
+                                    : client_1.Prisma.skip,
+                                saleDate: {
+                                    gte: saleDate ? newSaleDate : client_1.Prisma.skip,
+                                    lt: saleDate ? nextDay : client_1.Prisma.skip,
+                                },
+                                createdAt: {
+                                    gte: fromDate
+                                        ? new Date(fromDate)
+                                        : client_1.Prisma.skip,
+                                    lte: toDate ? new Date(toDate) : client_1.Prisma.skip,
+                                },
                             },
-                        },
-                        orderBy: { createdAt: "desc" },
-                    })];
+                            orderBy: { createdAt: "desc" },
+                        }),
+                        prismaClient_1.prisma.lead.count(),
+                    ])];
             case 2:
-                leads = _b.sent();
-                res.send(leads);
+                _b = _c.sent(), leads = _b[0], total = _b[1];
+                res.send({ leads: leads, total: total, page: page, totalPages: Math.ceil(total / limit) });
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _b.sent();
+                error_2 = _c.sent();
                 console.log(error_2);
                 next(error_2);
                 return [3 /*break*/, 4];
@@ -313,16 +323,19 @@ var getSingleLead = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getSingleLead = getSingleLead;
 var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, firstName, middleName, lastName, address, city, county, pincode, phone, fee, currency, bankName, accountName, sort, dateOfBirth, status, reason, initialStatus, finalStatus, lead, statusChangeReason, content, notif, cacheKey, error_5;
+    var id, _a, title, firstName, middleName, lastName, address, city, county, pincode, phone, fee, currency, bankName, accountName, sort, dateOfBirth, status, reason, 
+    //
+    comment, password, poa, initialStatus, finalStatus, lead, statusChangeReason, content, notif, cacheKey, error_5;
     var _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, status = _a.status, reason = _a.reason;
+                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa;
+                console.log(phone);
                 _d.label = 1;
             case 1:
-                _d.trys.push([1, 6, , 7]);
+                _d.trys.push([1, 7, , 8]);
                 initialStatus = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.initialStatus;
                 finalStatus = "";
                 return [4 /*yield*/, prismaClient_1.prisma.lead.update({
@@ -338,12 +351,15 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             city: city ? city : client_1.Prisma.skip,
                             county: county ? county : client_1.Prisma.skip,
                             pincode: pincode ? pincode : client_1.Prisma.skip,
+                            password: password ? password : client_1.Prisma.skip,
+                            phone: phone ? phone : client_1.Prisma.skip,
                             fee: fee ? fee : client_1.Prisma.skip,
                             currency: currency ? currency : client_1.Prisma.skip,
                             bankName: bankName ? bankName : client_1.Prisma.skip,
                             accountName: accountName ? accountName : client_1.Prisma.skip,
                             sort: sort ? sort : client_1.Prisma.skip,
-                            phone: phone ? phone : client_1.Prisma.skip,
+                            poa: poa ? (poa === "true" ? true : false) : client_1.Prisma.skip,
+                            comment: comment ? comment : client_1.Prisma.skip,
                         },
                         include: {
                             status: { select: { name: true } },
@@ -371,6 +387,7 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 content = reason
                     ? "Lead created on ".concat(new Date(lead === null || lead === void 0 ? void 0 : lead.saleDate).toDateString(), " changed status from ").concat(initialStatus === null || initialStatus === void 0 ? void 0 : initialStatus.toUpperCase(), " to ").concat(finalStatus === null || finalStatus === void 0 ? void 0 : finalStatus.toUpperCase(), " \n\nREASON:\n ").concat(reason)
                     : "Lead created on ".concat(new Date(lead === null || lead === void 0 ? void 0 : lead.saleDate).toDateString(), " changed status from ").concat(initialStatus === null || initialStatus === void 0 ? void 0 : initialStatus.toUpperCase(), " to ").concat(finalStatus === null || finalStatus === void 0 ? void 0 : finalStatus.toUpperCase());
+                if (!(initialStatus !== finalStatus)) return [3 /*break*/, 6];
                 return [4 /*yield*/, prismaClient_1.prisma.notification.create({
                         data: {
                             type: "important",
@@ -387,16 +404,18 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                         notif: notif,
                     });
                 }
+                _d.label = 6;
+            case 6:
                 cacheKey = "userprofile_".concat(lead === null || lead === void 0 ? void 0 : lead.leadByUserId);
                 cache_1.cache.del(cacheKey);
                 res.send(lead);
-                return [3 /*break*/, 7];
-            case 6:
+                return [3 /*break*/, 8];
+            case 7:
                 error_5 = _d.sent();
                 console.log(error_5);
                 next(error_5);
-                return [3 /*break*/, 7];
-            case 7: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };

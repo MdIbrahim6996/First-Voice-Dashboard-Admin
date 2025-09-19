@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProcessLeadCount = exports.getTopSellers = void 0;
+exports.getDailySales = exports.getProcessLeadCount = exports.getTopSellers = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var getTopSellers = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var currentDay, nextDay, seller, error_1;
@@ -74,8 +85,33 @@ var getTopSellers = function (req, res, next) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.getTopSellers = getTopSellers;
+function getTimeCategory(createdAt) {
+    var date = new Date(createdAt);
+    var hours = date.getUTCHours();
+    var minutes = date.getUTCMinutes();
+    var totalMinutes = hours * 60 + minutes;
+    // ranges in UTC
+    var range1Start = 9 * 60; // 09:00
+    var range1End = 12 * 60; // 12:00
+    var range2Start = 12 * 60 + 30; // 12:30
+    var range2End = 15 * 60; // 15:00
+    var range3Start = 15 * 60 + 30; // 15:30
+    var range3End = 18 * 60; // 18:00
+    if (totalMinutes >= range1Start && totalMinutes <= range1End) {
+        return "first"; //09:00 – 12:00;
+    }
+    else if (totalMinutes >= range2Start && totalMinutes <= range2End) {
+        return "second"; //12:30 – 15:00;
+    }
+    else if (totalMinutes >= range3Start && totalMinutes <= range3End) {
+        return "third"; //15:30 – 18:00;
+    }
+    else {
+        return "Other";
+    }
+}
 var getProcessLeadCount = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var date, date2, leadCount, error_2;
+    var date, date2, leadCount, leads, grouped, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -86,7 +122,7 @@ var getProcessLeadCount = function (req, res, next) { return __awaiter(void 0, v
                 date2.setUTCHours(0, 0, 0, 0);
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, prismaClient_1.prisma.process.findMany({
                         include: {
                             User: {
@@ -112,15 +148,117 @@ var getProcessLeadCount = function (req, res, next) { return __awaiter(void 0, v
                     })];
             case 2:
                 leadCount = _a.sent();
-                res.send(leadCount);
-                return [3 /*break*/, 4];
+                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
+                        select: {
+                            id: true,
+                            createdAt: true,
+                            leadBy: { select: { alias: true } },
+                        },
+                    })];
             case 3:
+                leads = _a.sent();
+                grouped = leads.reduce(function (acc, lead) {
+                    var cat = getTimeCategory(new Date(lead.createdAt));
+                    if (!acc[cat])
+                        acc[cat] = [];
+                    acc[cat].push(lead);
+                    return acc;
+                }, {});
+                res.send(leadCount);
+                return [3 /*break*/, 5];
+            case 4:
                 error_2 = _a.sent();
                 console.log(error_2);
                 next(error_2);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getProcessLeadCount = getProcessLeadCount;
+var getDailySales = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var date, date2, leads, grouped, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                date = new Date();
+                date.setUTCHours(0, 0, 0, 0);
+                date2 = new Date();
+                date2.setUTCDate(date.getDate() + 1);
+                date2.setUTCHours(0, 0, 0, 0);
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
+                        select: {
+                            id: true,
+                            processId: true,
+                            createdAt: true,
+                            leadBy: { select: { alias: true, id: true } },
+                        },
+                        where: { processId: { not: null } },
+                    })];
+            case 2:
+                leads = _a.sent();
+                grouped = leads.reduce(function (acc, lead) {
+                    var processId = lead.processId, createdAt = lead.createdAt, leadBy = lead.leadBy;
+                    var id = leadBy === null || leadBy === void 0 ? void 0 : leadBy.id;
+                    var date = new Date(createdAt);
+                    var hours = date.getUTCHours();
+                    var minutes = date.getUTCMinutes();
+                    var totalMinutes = hours * 60 + minutes;
+                    // ranges in UTC
+                    var range1Start = 9 * 60; // 09:00
+                    var range1End = 12 * 60; // 12:00
+                    var range2Start = 12 * 60 + 30; // 12:30
+                    var range2End = 15 * 60; // 15:00
+                    var range3Start = 15 * 60 + 30; // 15:30
+                    var range3End = 18 * 60; // 18:00
+                    // determine half
+                    var half;
+                    if (totalMinutes >= range1Start && totalMinutes <= range1End) {
+                        half = "firstHalf";
+                    }
+                    else if (totalMinutes >= range2Start &&
+                        totalMinutes <= range2End) {
+                        half = "secondHalf";
+                    }
+                    else if (totalMinutes >= range3Start &&
+                        totalMinutes <= range3End) {
+                        half = "thirdHalf";
+                    }
+                    else {
+                        half = "other"; // optional, in case leads are outside these times
+                    }
+                    // @ts-ignore
+                    if (!acc[processId])
+                        acc[processId] = {};
+                    // @ts-ignore
+                    if (!acc[processId][half])
+                        acc[processId][half] = [];
+                    // find if lead already exists in the array
+                    // @ts-ignore
+                    var existing = acc[processId][half].find(function (l) { var _a; return ((_a = l === null || l === void 0 ? void 0 : l.leadBy) === null || _a === void 0 ? void 0 : _a.id) === id; });
+                    if (existing) {
+                        existing.count = (existing.count || 1) + 1;
+                    }
+                    else {
+                        // @ts-ignore
+                        acc[processId][half].push(__assign(__assign({}, lead), { count: 1 }));
+                    }
+                    // @ts-ignore
+                    // acc[processId][half].push(lead);
+                    return acc;
+                }, {});
+                res.send(grouped);
+                return [3 /*break*/, 4];
+            case 3:
+                error_3 = _a.sent();
+                console.log(error_3);
+                next(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.getProcessLeadCount = getProcessLeadCount;
+exports.getDailySales = getDailySales;

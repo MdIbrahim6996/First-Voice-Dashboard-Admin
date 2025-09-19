@@ -620,7 +620,7 @@ const AddLeads = () => {
                                 <option disabled selected value="">
                                     Select a Payment Method
                                 </option>
-                                <option value="cash/cheque">Cash/Cheque</option>
+                                <option value="cash">Cash/Cheque</option>
                                 <option value="directDebit">
                                     Direct Debit (DD)
                                 </option>

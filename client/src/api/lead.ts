@@ -13,11 +13,13 @@ export const getAllLead = async (
     verifierUser: number,
     saleDate: string,
     fromDate: string,
-    toDate: string
+    toDate: string,
+    page: number,
+    limit: number
 ) => {
     try {
         const { data } = await axiosInstance.get(
-            `/lead?status=${status}&phone=${phone}&process=${process}&leadUser=${leadUser}&closerUser=${closerUser}&verifierUser=${verifierUser}&saleDate=${saleDate}&fromDate=${fromDate}&toDate=${toDate}`
+            `/lead?status=${status}&phone=${phone}&process=${process}&leadUser=${leadUser}&closerUser=${closerUser}&verifierUser=${verifierUser}&saleDate=${saleDate}&fromDate=${fromDate}&toDate=${toDate}&page=${page}&limit=${limit}`
         );
         return data;
     } catch (error) {
@@ -32,12 +34,9 @@ export const getAllLead = async (
 //SUPERADMIN
 export const createLead = async (formData: any) => {
     try {
-        const { data } = await axiosInstance.post(
-            `/lead`,
-            {
-                ...formData,
-            }
-        );
+        const { data } = await axiosInstance.post(`/lead`, {
+            ...formData,
+        });
         return data;
     } catch (error) {
         console.log(error);

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const getTopSellers = async () => {
     try {
         const { data } = await axiosInstance.get(
-            `/superadmin/main-dashboard/seller`
+            `/superadmin/main-dashboard/top-seller`
         );
         return data;
     } catch (error) {
@@ -20,6 +20,20 @@ export const getProcessLeadCount = async () => {
     try {
         const { data } = await axiosInstance.get(
             `/superadmin/main-dashboard/process-lead-count`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
+export const getDailySales = async () => {
+    try {
+        const { data } = await axiosInstance.get(
+            `/superadmin/main-dashboard/daily-sales`
         );
         return data;
     } catch (error) {

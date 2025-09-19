@@ -41,7 +41,7 @@ const RootLayout = () => {
     } = useQuery({
         queryKey: ["user-detail"],
         queryFn: getUserDetail,
-        refetchInterval: 5 * 1000, // 10s in
+        refetchInterval: 10 * 1000, // 10s in
     });
 
     if (isSuccess) {

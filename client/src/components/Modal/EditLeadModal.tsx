@@ -43,7 +43,8 @@ const EditLeadModal = ({
             centre: item?.centre,
             pincode: item?.pincode,
             phone: item?.phone,
-            poa: item?.poa,
+            password: item?.password,
+            poa: String(item?.poa),
             process: item?.processId,
             plan: item?.planId,
             closer: item?.closerId,
@@ -65,6 +66,7 @@ const EditLeadModal = ({
             accountName: item?.accountName,
             accountNumber: item?.accountNumber,
             sort: item?.sort,
+            comment: item?.comment,
             dateOfBirth: item?.dateOfBirth?.substring(0, 10),
             status: item?.statusId,
         },
@@ -410,7 +412,7 @@ const EditLeadModal = ({
                                         Password
                                     </label>
                                     <input
-                                        type="password"
+                                        type="text"
                                         {...register("password")}
                                         id="password"
                                         placeholder="***********"
@@ -470,7 +472,7 @@ const EditLeadModal = ({
                                         id="poa"
                                         className="border outline-none border-gray-400 px-3 py-1 rounded"
                                     >
-                                        <option disabled selected value="">
+                                        <option disabled value="">
                                             Select Yes/No.
                                         </option>
                                         <option value={"true"}>YES</option>
@@ -711,7 +713,7 @@ const EditLeadModal = ({
                                         <option disabled selected value="">
                                             Select a Payment Method
                                         </option>
-                                        <option value="cash/cheque">
+                                        <option value="cash">
                                             Cash/Cheque
                                         </option>
                                         <option value="directDebit">
@@ -1132,7 +1134,7 @@ const EditLeadModal = ({
                                         Comments
                                     </label>
                                     <textarea
-                                        name="comment"
+                                        {...register("comment")}
                                         rows={5}
                                         id="comments"
                                         placeholder="Comments if Any"
