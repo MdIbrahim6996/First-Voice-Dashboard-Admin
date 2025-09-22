@@ -4,8 +4,7 @@ import { Prisma } from "@prisma/client";
 import { pusher } from "../lib/pusher";
 import { groupBy } from "lodash";
 import { cache } from "../lib/cache";
-
-
+import superjson from "superjson";
 
 export const createLead = async (
     req: Request,
@@ -122,7 +121,7 @@ export const createLead = async (
             include: { status: { select: { name: true } } },
         });
 
-        const appliancesArray = appliances.map((item: any, i: number) => ({
+        const appliancesArray = appliances?.map((item: any, i: number) => ({
             ...item,
             age: +item?.age,
             leadId: lead?.id,
@@ -274,6 +273,78 @@ export const getAllLead = async (
         next(error);
     }
 };
+export const getAllOldLead = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { phone, post } = req.query;
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 30;
+    const skip = (page - 1) * limit;
+
+    try {
+        const [leads, total] = await Promise.all([
+            prisma.old_leads.findMany({
+                skip,
+                take: limit,
+
+                where: {
+                    phone: phone ? (phone as string) : Prisma.skip,
+                    pin: post ? (post as string) : Prisma.skip,
+                },
+                orderBy: { created_at: "desc" },
+            }),
+            prisma.old_leads.count(),
+        ]);
+        res.send({
+            leads: superjson.serialize(leads),
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+export const getAllOldLeadForms = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { phone, post } = req.query;
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 30;
+    const skip = (page - 1) * limit;
+
+    try {
+        const [leads, total] = await Promise.all([
+            prisma.lead_forms.findMany({
+                skip,
+                take: limit,
+                where: {
+                    phone: phone ? (phone as string) : Prisma.skip,
+                    pincode: post ? (post as string) : Prisma.skip,
+                },
+                orderBy: { created_at: "desc" },
+            }),
+            prisma.lead_forms.count(),
+        ]);
+        console.log(total, page);
+        res.send({
+            leads: superjson.serialize(leads),
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
 export const getAllLeadOfUser = async (
     req: Request,
     res: Response,
@@ -380,6 +451,8 @@ export const updateLead = async (
         accountName,
         sort,
         dateOfBirth,
+        closer,
+        verifier,
         status,
         reason,
         //
@@ -387,7 +460,8 @@ export const updateLead = async (
         password,
         poa,
     } = req.body;
-    console.log(phone);
+    // console.log(phone);
+    // console.log(req.body);
 
     try {
         let initialStatus = req?.body?.initialStatus as string;
@@ -414,6 +488,8 @@ export const updateLead = async (
                 accountName: accountName ? accountName : Prisma.skip,
                 sort: sort ? sort : Prisma.skip,
                 poa: poa ? (poa === "true" ? true : false) : Prisma.skip,
+                closerId: closer ? parseInt(closer) : Prisma.skip,
+                verifierId: verifier ? parseInt(verifier) : Prisma.skip,
                 comment: comment ? comment : Prisma.skip,
             },
             include: {

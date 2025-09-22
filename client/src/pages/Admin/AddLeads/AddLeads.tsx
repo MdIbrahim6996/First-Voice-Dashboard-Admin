@@ -498,7 +498,7 @@ const AddLeads = () => {
                         </div>
                     </div>
 
-                    {processValue && +processValue !== 7 ? (
+                    {processValue && +processValue !== 3 ? (
                         <div className="my-5">
                             <div className="flex justify-between">
                                 <p className="capitalize text underline font-semibold italic">

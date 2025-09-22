@@ -11,6 +11,7 @@ import applianceRoutes from "./appliance.route";
 import {
     loginController,
     logoutController,
+    registerController,
 } from "../controllers/auth.controller";
 import { getUserDetails } from "../controllers/common.controller";
 import { isAuth } from "../middlewares/authMiddleware";
@@ -21,6 +22,7 @@ router.use("/admin", adminRoutes);
 router.use("/superadmin", superadminRoutes);
 
 //
+// router.post("/auth/register", registerController);
 router.post("/auth/login", loginController);
 router.post("/auth/logout", logoutController);
 //

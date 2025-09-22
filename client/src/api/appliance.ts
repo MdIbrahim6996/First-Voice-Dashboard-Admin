@@ -16,6 +16,23 @@ export const getAppliance = async (leadId: number) => {
         return error;
     }
 };
+export const getAppliancePerPage = async (leadIds: number[]) => {
+    try {
+        const { data } = await axiosInstance.post(
+            `/appliance/appliance-per-page`,
+            { leadIds }
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message, {
+                id: "getAppliance",
+            });
+        }
+        return error;
+    }
+};
 export const updateAppliance = async (id: number, formdata: any) => {
     try {
         const { data } = await axiosInstance.put(`/appliance/${id}`, {

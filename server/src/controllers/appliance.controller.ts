@@ -19,6 +19,23 @@ export const getAppliances = async (
         next(error);
     }
 };
+export const getAppliancePerPage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { leadIds } = req.body;
+    try {
+        const appliance = await prisma.appliance.findMany({
+            where: { leadId: { in: leadIds } },
+            orderBy: { createdAt: "desc" },
+        });
+        res.send(appliance);
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
 export const updateAppliance = async (
     req: Request,
     res: Response,

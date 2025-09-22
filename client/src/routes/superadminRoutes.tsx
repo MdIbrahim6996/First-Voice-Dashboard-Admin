@@ -41,6 +41,22 @@ export const superadminRoutes: RouteObject = {
             },
         },
         {
+            path: "old-leads",
+            async lazy() {
+                let OldLeads = await import("../pages/OldLeads/OldLeads");
+                return { Component: OldLeads.default };
+            },
+        },
+        {
+            path: "old-leadforms",
+            async lazy() {
+                let OldLeadForms = await import(
+                    "../pages/OldLeadForms/OldLeadForms"
+                );
+                return { Component: OldLeadForms.default };
+            },
+        },
+        {
             path: "holiday-calendar",
             async lazy() {
                 let Holiday = await import("../pages/Holiday/Holiday");
@@ -59,6 +75,13 @@ export const superadminRoutes: RouteObject = {
             async lazy() {
                 let Users = await import("../pages/Users/Users");
                 return { Component: Users.default };
+            },
+        },
+        {
+            path: "old-users",
+            async lazy() {
+                let OldUsers = await import("../pages/OldUsers/OldUsers");
+                return { Component: OldUsers.default };
             },
         },
         {

@@ -13,6 +13,7 @@ import EditLeadModal from "../../../components/Modal/EditLeadModal";
 import LeadDetailModal from "../../../components/Modal/LeadDetailModal";
 import Loader from "../../../components/Loader/Loader";
 import EmptyState from "../../../components/EmptyState/EmptyState";
+import { getAppliancePerPage } from "../../../api/appliance";
 
 const Leads = () => {
     const [phone, setPhone] = useState("");
@@ -114,43 +115,81 @@ const Leads = () => {
         },
     });
 
-    const excelLeadsData = leads?.map((item: any) => ({
-        status: item?.status?.name?.toUpperCase(),
-        saleDate: item?.saleDate?.substring(0, 10),
-        leadBy: item?.leadBy?.alias?.toUpperCase(),
-        closer: item?.closer?.alias?.toUpperCase(),
-        centre: item?.centre?.toUpperCase(),
-        // PERSONAL
-        title: item?.title?.toUpperCase(),
-        firstName: item?.firstName?.toUpperCase(),
-        middleName: item?.middleName?.toUpperCase(),
-        lastName: item?.lastName?.toUpperCase(),
-        address: item?.address,
-        city: item?.city?.toUpperCase(),
-        county: item?.county?.toUpperCase(),
-        post: item?.pincode,
-        dateOfBirth: item?.dateOfBirth?.substring(0, 10),
-        password: item?.password,
-        phone: item?.phone?.toString(),
-        // PROCESS / PLAN
-        process: item?.process?.name?.toUpperCase(),
-        plan: item?.plan?.name?.toUpperCase(),
-        // BANK
-        paymentMethod: item?.paymentMethod?.toUpperCase(),
-        bankName: item?.bankName?.toUpperCase(),
-        accountName: item?.accountName?.toUpperCase(),
-        accountNumber: item?.accountNumber?.toUpperCase(),
-        sort: item?.sort?.toUpperCase(),
-        // CARD
-        cardName: item?.cardName?.toUpperCase(),
-        cardBankName: item?.cardBankName?.toUpperCase(),
-        cardNumber: item?.cardNumber,
-        cardCvv: item?.cardCvv,
-        expiry: item?.expiry,
-        comment: item?.comment,
-    }));
     // console.log(leads);
     // console.log(excelLeadsData);
+
+    const leadIds = leads?.map((item: any) => item?.id) ?? [];
+
+    const { data: allApplainces } = useQuery({
+        queryKey: ["allAppliances", page],
+        queryFn: () => getAppliancePerPage(leadIds),
+        enabled: leadIds?.length > 0, // 🔑 this prevents early fetch
+    });
+
+    const newLeads = leads?.map((item: any) => {
+        let applianceArray: any = [];
+
+        for (let i = 0; i < allApplainces?.length; i++) {
+            if (allApplainces[i]?.leadId === item?.id) {
+                applianceArray.push(allApplainces[i]);
+            }
+        }
+        const flat: any = {};
+
+        applianceArray.forEach((appl: any, idx: number) => {
+            const i = idx + 1;
+            flat[`name_${i}`] = appl.name?.toUpperCase();
+            flat[`make_${i}`] = appl.makeOfAppliance?.toUpperCase();
+            flat[`age_${i}`] = appl.age;
+        });
+        return {
+            status: item?.status?.name?.toUpperCase(),
+            saleDate: item?.saleDate?.substring(0, 10),
+            leadBy: item?.leadBy?.alias?.toUpperCase(),
+            closer: item?.closer?.alias?.toUpperCase(),
+            centre: item?.centre?.toUpperCase(),
+            // PERSONAL
+            title: item?.title?.toUpperCase(),
+            firstName: item?.firstName?.toUpperCase(),
+            middleName: item?.middleName?.toUpperCase(),
+            lastName: item?.lastName?.toUpperCase(),
+            address: item?.address,
+            city: item?.city?.toUpperCase(),
+            county: item?.county?.toUpperCase(),
+            post: item?.pincode,
+            dateOfBirth: item?.dateOfBirth?.substring(0, 10),
+            password: item?.password,
+            phone: item?.phone?.toString(),
+            // PROCESS / PLAN
+            process: item?.process?.name?.toUpperCase(),
+            plan: item?.plan?.name?.toUpperCase(),
+            // BANK
+            paymentMethod: item?.paymentMethod?.toUpperCase(),
+            bankName: item?.bankName?.toUpperCase(),
+            accountName: item?.accountName?.toUpperCase(),
+            accountNumber: item?.accountNumber?.toUpperCase(),
+            sort: item?.sort?.toUpperCase(),
+            // CARD
+            cardName: item?.cardName?.toUpperCase(),
+            cardBankName: item?.cardBankName?.toUpperCase(),
+            cardNumber: item?.cardNumber,
+            cardCvv: item?.cardCvv,
+            expiry: item?.expiry,
+            comment: item?.comment,
+            // APPLIANCES
+            appliances: flat,
+            appliancesLength: applianceArray?.length,
+        };
+    });
+
+    // console.log(newLeads);
+
+    const maxAppliances =
+        newLeads && newLeads.length > 0
+            ? Math.max(
+                  ...newLeads.map((lead: any) => lead.appliancesLength || 0)
+              )
+            : 0;
 
     const headers = [
         { label: "STATUS", key: "status" },
@@ -189,6 +228,60 @@ const Leads = () => {
         //
         { label: "COMMENT", key: "comment" },
     ];
+
+    const excelLeadsData = newLeads?.map((item: any) => ({
+        status: item?.status?.name?.toUpperCase(),
+        saleDate: item?.saleDate?.substring(0, 10),
+        leadBy: item?.leadBy?.alias?.toUpperCase(),
+        closer: item?.closer?.alias?.toUpperCase(),
+        centre: item?.centre?.toUpperCase(),
+        // PERSONAL
+        title: item?.title?.toUpperCase(),
+        firstName: item?.firstName?.toUpperCase(),
+        middleName: item?.middleName?.toUpperCase(),
+        lastName: item?.lastName?.toUpperCase(),
+        address: item?.address,
+        city: item?.city?.toUpperCase(),
+        county: item?.county?.toUpperCase(),
+        post: item?.pincode,
+        dateOfBirth: item?.dateOfBirth?.substring(0, 10),
+        password: item?.password,
+        phone: item?.phone?.toString(),
+        // PROCESS / PLAN
+        process: item?.process?.name?.toUpperCase(),
+        plan: item?.plan?.name?.toUpperCase(),
+        // BANK
+        paymentMethod: item?.paymentMethod?.toUpperCase(),
+        bankName: item?.bankName?.toUpperCase(),
+        accountName: item?.accountName?.toUpperCase(),
+        accountNumber: item?.accountNumber?.toUpperCase(),
+        sort: item?.sort?.toUpperCase(),
+        // CARD
+        cardName: item?.cardName?.toUpperCase(),
+        cardBankName: item?.cardBankName?.toUpperCase(),
+        cardNumber: item?.cardNumber,
+        cardCvv: item?.cardCvv,
+        expiry: item?.expiry,
+        comment: item?.comment,
+    }));
+
+    const applianceHeaders = [];
+    for (let i = 0; i < maxAppliances; i++) {
+        applianceHeaders.push(
+            {
+                label: `APPLIANCE NAME ${i + 1}`,
+                key: `appliances.name_${i + 1}`,
+            },
+            {
+                label: `APPLIANCE MAKE ${i + 1}`,
+                key: `appliances.make_${i + 1}`,
+            },
+            { label: `APPLIANCE AGE ${i + 1}`, key: `appliances.age_${i + 1}` }
+        );
+    }
+
+    const newHeaders = [...headers, ...applianceHeaders];
+    // console.log(newHeaders);
 
     const resetFilters = () => {
         setPhone("");
@@ -457,8 +550,8 @@ const Leads = () => {
                             </div>
 
                             <CSVLink
-                                headers={headers}
-                                data={excelLeadsData ? excelLeadsData : []}
+                                headers={newHeaders}
+                                data={newLeads ? newLeads : []}
                                 filename="Leads.csv"
                             >
                                 <button className="py-1.5 px-7 bg-green-700 text-white rounded-md text-sm flex gap-1 items-center cursor-pointer">

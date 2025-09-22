@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../lib/prismaClient";
 import bcrypt from "bcrypt";
+import superjson from "superjson";
 import { Prisma } from "@prisma/client";
 
 export const createUser = async (
@@ -72,6 +73,21 @@ export const getAllUser = async (
     });
     res.send(users);
     try {
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+export const getAllOldUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const users = await prisma.old_users.findMany({
+            orderBy: { created_at: "desc" },
+        });
+        res.send(superjson.stringify(users));
     } catch (error) {
         console.log(error);
         next(error);

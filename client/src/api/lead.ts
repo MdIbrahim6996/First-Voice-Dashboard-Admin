@@ -30,6 +30,34 @@ export const getAllLead = async (
         return error;
     }
 };
+export const getAllOldLead = async (phone: string, post: string) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `/lead/old?phone=${phone}&post=${post}`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
+export const getAllOldLeadForms = async (phone: string, post: string) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `/lead/old-leadforms?phone=${phone}&post=${post}`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
 
 //SUPERADMIN
 export const createLead = async (formData: any) => {

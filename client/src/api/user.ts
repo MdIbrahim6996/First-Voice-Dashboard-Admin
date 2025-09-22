@@ -12,6 +12,14 @@ export const getAllUser = async () => {
         console.log(error);
     }
 };
+export const getAllOldUser = async () => {
+    try {
+        const { data } = await axiosInstance.get(`/user/old`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 //SUPERADMIN
 export const createUser = async (formData: any) => {
