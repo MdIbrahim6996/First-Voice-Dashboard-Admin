@@ -29,6 +29,8 @@ model User {
   Notification       Notification[]
   StatusChangeReason StatusChangeReason[]
   process            Process?             @relation(fields: [processId], references: [id])
+
+  @@map("user")
 }
 
 model Process {
@@ -39,6 +41,8 @@ model Process {
   Lead      Lead[]
   plans     Plan[]
   User      User[]
+
+  @@map("process")
 }
 
 model Plan {
@@ -49,6 +53,8 @@ model Plan {
   updatedAt DateTime @updatedAt
   Lead      Lead[]
   process   Process? @relation(fields: [processId], references: [id])
+
+  @@map("plan")
 }
 
 model Holiday {
@@ -58,14 +64,18 @@ model Holiday {
   endDate   DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("holiday")
 }
 
 model Attendance {
   id       Int      @id @default(autoincrement())
-  userId   Int?     @default(1)
+  userId   Int?
   isLate   Boolean  @default(false)
   dateTime DateTime @default(now())
   user     User?    @relation(fields: [userId], references: [id])
+
+  @@map("attendance")
 }
 
 model Appliance {
@@ -77,6 +87,8 @@ model Appliance {
   updatedAt       DateTime @updatedAt
   leadId          Int?
   Lead            Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@map("appliance")
 }
 
 model Lead {
@@ -100,7 +112,7 @@ model Lead {
   bankName           String?
   accountName        String?
   sort               String?
-  statusId           Int?                 @default(1)
+  statusId           Int?
   saleDate           DateTime             @default(now())
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
@@ -125,6 +137,8 @@ model Lead {
   status             Status?              @relation(fields: [statusId], references: [id])
   verifier           User?                @relation("leadVerifier", fields: [verifierId], references: [id])
   StatusChangeReason StatusChangeReason[]
+
+  @@map("lead")
 }
 
 model Status {
@@ -133,6 +147,8 @@ model Status {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Lead      Lead[]
+
+  @@map("status")
 }
 
 model Notification {
@@ -145,6 +161,8 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("notification")
 }
 
 model LeadCount {
@@ -159,6 +177,7 @@ model LeadCount {
   user      User?    @relation(fields: [userId], references: [id])
 
   @@unique([date, month, year, userId], name: "uniqueDate")
+  @@map("leadcount")
 }
 
 model StatusChangeReason {
@@ -172,6 +191,8 @@ model StatusChangeReason {
   toStatus   String?
   lead       Lead?    @relation(fields: [leadId], references: [id])
   user       User?    @relation(fields: [userId], references: [id])
+
+  @@map("status_change_reason")
 }
 
 model old_users {
@@ -203,6 +224,7 @@ model old_users {
 
   @@index([email], map: "users_email_index")
   @@index([phone], map: "users_phone_index")
+  @@map("old_users")
 }
 
 model old_leads {
@@ -246,6 +268,7 @@ model old_leads {
 
   @@index([closer_user_id], map: "leads_closer_user_id_foreign")
   @@index([user_id], map: "leads_user_id_foreign")
+  @@map("old_leads")
 }
 
 model lead_forms {
@@ -285,4 +308,6 @@ model lead_forms {
   deleted_at        DateTime? @db.Timestamp(0)
   created_at        DateTime? @db.Timestamp(0)
   updated_at        DateTime? @db.Timestamp(0)
+
+  @@map("lead_forms")
 }

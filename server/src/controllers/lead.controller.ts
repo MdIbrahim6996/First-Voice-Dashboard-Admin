@@ -70,7 +70,7 @@ export const createLead = async (
         appliances,
     } = req.body;
     const date = new Date();
-    console.log(req.body);
+    // console.log(req.body);
 
     try {
         const status = await prisma.status.findFirst({
@@ -333,7 +333,6 @@ export const getAllOldLeadForms = async (
             }),
             prisma.lead_forms.count(),
         ]);
-        console.log(total, page);
         res.send({
             leads: superjson.serialize(leads),
             total,

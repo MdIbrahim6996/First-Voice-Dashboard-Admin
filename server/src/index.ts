@@ -11,7 +11,10 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:5173","https://first-voice-dashboard-admin.onrender.com"],
+        origin: [
+            "http://localhost:5173",
+            "https://first-voice-dashboard-admin.onrender.com",
+        ],
         credentials: true,
         optionsSuccessStatus: 200,
     })
