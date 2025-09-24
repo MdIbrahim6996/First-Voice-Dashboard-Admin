@@ -283,7 +283,7 @@ const LeadDetailModal = ({
                                             id="leadBy"
                                             className="border outline-none border-gray-400 px-3 py-1 rounded uppercase"
                                         >
-                                            {details?.leadBy?.name}
+                                            {details?.leadBy?.alias}
                                         </p>
                                     </div>
                                     <div className="flex flex-col text-sm space-y-0.5">
@@ -298,7 +298,7 @@ const LeadDetailModal = ({
                                             id="closer"
                                             className="border outline-none border-gray-400 px-3 py-1 rounded uppercase"
                                         >
-                                            {details?.closer?.name}
+                                            {details?.closer?.alias}
                                         </p>
                                     </div>
                                     <div className="flex flex-col text-sm space-y-0.5">
@@ -313,8 +313,8 @@ const LeadDetailModal = ({
                                             id="verifier"
                                             className="border outline-none border-gray-400 px-3 py-1 rounded uppercase"
                                         >
-                                            {details?.verifier?.name
-                                                ? details?.verifier?.name
+                                            {details?.verifier?.alias
+                                                ? details?.verifier?.alias
                                                 : "No Verifier"}
                                         </p>
                                     </div>

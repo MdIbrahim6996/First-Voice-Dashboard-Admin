@@ -56,18 +56,18 @@ export const adminLinks = [
         link: "/admin/leads",
         icon: <MdList className="text-xl" />,
     },
-    // {
-    //     id: 6,
-    //     title: "Holiday-Calendar",
-    //     link: "/admin/holiday-calendar",
-    //     icon: <MdCalendarMonth className="text-xl" />,
-    // },
-    // {
-    //     id: 7,
-    //     title: "Profile",
-    //     link: "/admin/profile",
-    //     icon: <MdPerson className="text-xl" />,
-    // },
+    {
+        id: 6,
+        title: "Old Leads",
+        link: "/admin/old-leads",
+        icon: <MdList className="text-xl" />,
+    },
+    {
+        id: 7,
+        title: "Old LeadForms",
+        link: "/admin/old-leadforms",
+        icon: <MdList className="text-xl" />,
+    },
 ];
 export const superAdminLinks = [
     // {

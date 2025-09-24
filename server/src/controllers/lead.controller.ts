@@ -459,6 +459,12 @@ export const updateLead = async (
         comment,
         password,
         poa,
+        //
+        process,
+        plan,
+        paymentMethod,
+        bank,
+        card,
     } = req.body;
     // console.log(phone);
     // console.log(req.body);
@@ -484,13 +490,29 @@ export const updateLead = async (
                 phone: phone ? phone : Prisma.skip,
                 fee: fee ? fee : Prisma.skip,
                 currency: currency ? currency : Prisma.skip,
-                bankName: bankName ? bankName : Prisma.skip,
-                accountName: accountName ? accountName : Prisma.skip,
-                sort: sort ? sort : Prisma.skip,
+                bankName: bank?.bankName ? bank?.bankName : Prisma.skip,
+                accountName: bank?.accountName
+                    ? bank?.accountName
+                    : Prisma.skip,
+                accountNumber: bank?.accountNumber
+                    ? bank?.accountNumber
+                    : Prisma.skip,
+                sort: bank?.sort ? bank?.sort : Prisma.skip,
+                // CARD
+                cardName: card?.name ? card?.name : Prisma.skip,
+                cardBankName: card?.bankName
+                    ? card?.bankName
+                    : Prisma.skip,
+                cardNumber: card?.cardNumber ? card?.cardNumber : Prisma.skip,
+                cardCvv: card?.cvv ? card?.cvv : Prisma.skip,
+                expiry: card?.expiry ? card?.expiry : Prisma.skip,
                 poa: poa ? (poa === "true" ? true : false) : Prisma.skip,
                 closerId: closer ? parseInt(closer) : Prisma.skip,
                 verifierId: verifier ? parseInt(verifier) : Prisma.skip,
+                processId: process ? parseInt(process) : Prisma.skip,
+                planId: plan ? parseInt(plan) : Prisma.skip,
                 comment: comment ? comment : Prisma.skip,
+                paymentMethod: paymentMethod ? paymentMethod : Prisma.skip,
             },
             include: {
                 status: { select: { name: true } },

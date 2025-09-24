@@ -58,6 +58,7 @@ const EditLeadModal = ({
             },
             card: {
                 cardNumber: item?.cardNumber,
+                bankName: item?.cardBankName,
                 name: item?.cardName,
                 cvv: item?.cardCvv,
                 expiry: item?.expiry,

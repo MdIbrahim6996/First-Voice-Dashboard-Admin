@@ -1,6 +1,7 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 import AdminLayout from "../components/Shared/Layout/AdminLayout";
 import NotFoundPage from "../pages/NotFound";
+import Greeting from "../pages/Admin/Greeting/Greeting";
 
 export const adminRoutes: RouteObject = {
     path: "admin",
@@ -8,7 +9,7 @@ export const adminRoutes: RouteObject = {
     children: [
         {
             path: "",
-            element: <Navigate to={"main-dashboard"} />,
+            element: <Greeting />,
         },
         {
             path: "admin",
@@ -41,36 +42,22 @@ export const adminRoutes: RouteObject = {
                 return { Component: UserLeads.default };
             },
         },
-        // {
-        //     path: "attendance",
-        //     async lazy() {
-        //         let Attendance = await import("../pages/Attendance/Attendance");
-        //         return { Component: Attendance.default };
-        //     },
-        // },
-        // {
-        //     path: "holiday-calendar",
-        //     async lazy() {
-        //         let Holiday = await import("../pages/Holiday/Holiday");
-        //         return { Component: Holiday.default };
-        //     },
-        // },
-        // {
-        //     path: "profile",
-        //     async lazy() {
-        //         let Profile = await import("../pages/Profile/Profile");
-        //         return { Component: Profile.default };
-        //     },
-        // },
-        // {
-        //     path: "notifications",
-        //     async lazy() {
-        //         let Notification = await import(
-        //             "../pages/Notification/Notification"
-        //         );
-        //         return { Component: Notification.default };
-        //     },
-        // },
+        {
+            path: "old-leads",
+            async lazy() {
+                let OldLeads = await import("../pages/Admin/OldLeads/OldLeads");
+                return { Component: OldLeads.default };
+            },
+        },
+        {
+            path: "old-leadforms",
+            async lazy() {
+                let OldLeadForms = await import(
+                    "../pages/Admin/OldLeadForms/OldLeadForms"
+                );
+                return { Component: OldLeadForms.default };
+            },
+        },
         {
             path: "*",
             element: <NotFoundPage />,
