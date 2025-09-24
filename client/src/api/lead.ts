@@ -30,10 +30,15 @@ export const getAllLead = async (
         return error;
     }
 };
-export const getAllOldLead = async (phone: string, post: string) => {
+export const getAllOldLead = async (
+    phone: string,
+    post: string,
+    page: number,
+    limit: number
+) => {
     try {
         const { data } = await axiosInstance.get(
-            `/lead/old?phone=${phone}&post=${post}`
+            `/lead/old?phone=${phone}&post=${post}&page=${page}&limit=${limit}`
         );
         return data;
     } catch (error) {
@@ -44,10 +49,15 @@ export const getAllOldLead = async (phone: string, post: string) => {
         return error;
     }
 };
-export const getAllOldLeadForms = async (phone: string, post: string) => {
+export const getAllOldLeadForms = async (
+    phone: string,
+    post: string,
+    page: number,
+    limit: number
+) => {
     try {
         const { data } = await axiosInstance.get(
-            `/lead/old-leadforms?phone=${phone}&post=${post}`
+            `/lead/old-leadforms?phone=${phone}&post=${post}&page=${page}&limit=${limit}`
         );
         return data;
     } catch (error) {

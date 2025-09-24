@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllOldLead, getAllOldLeadForms } from "../../api/lead";
+import { getAllOldLead } from "../../api/lead";
 import { useEffect, useRef, useState } from "react";
 
 import Loader from "../../components/Loader/Loader";
@@ -37,7 +37,7 @@ const OldLeads = () => {
 
     const { data, refetch, isLoading, isFetching } = useQuery({
         queryKey: ["old-leadforms", page],
-        queryFn: () => getAllOldLead(phone, post),
+        queryFn: () => getAllOldLead(phone, post, page, limit),
         placeholderData: true,
     });
 

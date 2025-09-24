@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAppliance = exports.getAppliances = void 0;
+exports.updateAppliance = exports.getAppliancePerPage = exports.getAppliances = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var client_1 = require("@prisma/client");
 var getAppliances = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -66,8 +66,35 @@ var getAppliances = function (req, res, next) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.getAppliances = getAppliances;
+var getAppliancePerPage = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var leadIds, appliance, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                leadIds = req.body.leadIds;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, prismaClient_1.prisma.appliance.findMany({
+                        where: { leadId: { in: leadIds } },
+                        orderBy: { createdAt: "desc" },
+                    })];
+            case 2:
+                appliance = _a.sent();
+                res.send(appliance);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                console.log(error_2);
+                next(error_2);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAppliancePerPage = getAppliancePerPage;
 var updateAppliance = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, name, makeOfAppliance, age, appliance, error_2;
+    var id, _a, name, makeOfAppliance, age, appliance, error_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -93,9 +120,9 @@ var updateAppliance = function (req, res, next) { return __awaiter(void 0, void 
                 res.send(appliance);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _b.sent();
-                console.log(error_2);
-                next(error_2);
+                error_3 = _b.sent();
+                console.log(error_3);
+                next(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

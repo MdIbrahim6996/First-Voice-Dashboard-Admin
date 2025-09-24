@@ -37,7 +37,7 @@ const OldLeadForms = () => {
 
     const { data, refetch, isLoading, isFetching } = useQuery({
         queryKey: ["old-leadforms", page],
-        queryFn: () => getAllOldLeadForms(phone, post),
+        queryFn: () => getAllOldLeadForms(phone, post, page, limit),
         placeholderData: true,
     });
 

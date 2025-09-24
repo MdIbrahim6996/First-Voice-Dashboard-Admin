@@ -39,16 +39,16 @@ const OldLeads = () => {
 
     const { data, refetch, isLoading, isFetching } = useQuery({
         queryKey: ["old-leadforms", page],
-        queryFn: () => getAllOldLead(phone, post),
+        queryFn: () => getAllOldLead(phone, post, page, limit),
         placeholderData: true,
     });
 
     const leads = data?.leads?.json;
 
-    const pagesArray = Array.from(
-        { length: data?.totalPages },
-        (_, i) => i + 1
-    );
+    // const pagesArray = Array.from(
+    //     { length: data?.totalPages },
+    //     (_, i) => i + 1
+    // );
 
     const resetFilters = () => {
         setPhone("");

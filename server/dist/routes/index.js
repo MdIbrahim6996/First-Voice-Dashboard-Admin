@@ -19,6 +19,7 @@ var router = (0, express_1.Router)();
 router.use("/admin", admin_1.default);
 router.use("/superadmin", superadmin_1.default);
 //
+// router.post("/auth/register", registerController);
 router.post("/auth/login", auth_controller_1.loginController);
 router.post("/auth/logout", auth_controller_1.logoutController);
 //

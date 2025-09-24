@@ -46,12 +46,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteLead = exports.updateLead = exports.getSingleLead = exports.getLeadOfUserByDate = exports.getAllLeadOfUser = exports.getAllLead = exports.createLead = void 0;
+exports.deleteLead = exports.updateLead = exports.getSingleLead = exports.getLeadOfUserByDate = exports.getAllLeadOfUser = exports.getAllOldLeadForms = exports.getAllOldLead = exports.getAllLead = exports.createLead = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var client_1 = require("@prisma/client");
 var pusher_1 = require("../lib/pusher");
 var cache_1 = require("../lib/cache");
+var superjson_1 = __importDefault(require("superjson"));
 var createLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, firstName, middleName, lastName, centre, address, city, county, pincode, password, dateOfBirth, phone, process, plan, poa, closer, verifier, bank, paymentMethod, shift, comment, card, appliances, date, status_1, lead_1, appliancesArray, dailyLeadCount, error_1;
     var _b;
@@ -113,7 +117,7 @@ var createLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                     })];
             case 3:
                 lead_1 = _c.sent();
-                appliancesArray = appliances.map(function (item, i) { return (__assign(__assign({}, item), { age: +(item === null || item === void 0 ? void 0 : item.age), leadId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.id })); });
+                appliancesArray = appliances === null || appliances === void 0 ? void 0 : appliances.map(function (item, i) { return (__assign(__assign({}, item), { age: +(item === null || item === void 0 ? void 0 : item.age), leadId: lead_1 === null || lead_1 === void 0 ? void 0 : lead_1.id })); });
                 if (!(appliances && appliances.length > 0)) return [3 /*break*/, 5];
                 return [4 /*yield*/, prismaClient_1.prisma.appliance.createMany({ data: appliancesArray })];
             case 4:
@@ -226,8 +230,95 @@ var getAllLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.getAllLead = getAllLead;
+var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, phone, post, page, limit, skip, _b, leads, total, error_3;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.query, phone = _a.phone, post = _a.post;
+                page = parseInt(req.query.page) || 1;
+                limit = parseInt(req.query.limit) || 30;
+                skip = (page - 1) * limit;
+                _c.label = 1;
+            case 1:
+                _c.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, Promise.all([
+                        prismaClient_1.prisma.old_leads.findMany({
+                            skip: skip,
+                            take: limit,
+                            where: {
+                                phone: phone ? phone : client_1.Prisma.skip,
+                                pin: post ? post : client_1.Prisma.skip,
+                            },
+                            orderBy: { created_at: "desc" },
+                        }),
+                        prismaClient_1.prisma.old_leads.count(),
+                    ])];
+            case 2:
+                _b = _c.sent(), leads = _b[0], total = _b[1];
+                res.send({
+                    leads: superjson_1.default.serialize(leads),
+                    total: total,
+                    page: page,
+                    totalPages: Math.ceil(total / limit),
+                });
+                return [3 /*break*/, 4];
+            case 3:
+                error_3 = _c.sent();
+                console.log(error_3);
+                next(error_3);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllOldLead = getAllOldLead;
+var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, phone, post, page, limit, skip, _b, leads, total, error_4;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.query, phone = _a.phone, post = _a.post;
+                page = parseInt(req.query.page) || 1;
+                limit = parseInt(req.query.limit) || 30;
+                skip = (page - 1) * limit;
+                _c.label = 1;
+            case 1:
+                _c.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, Promise.all([
+                        prismaClient_1.prisma.lead_forms.findMany({
+                            skip: skip,
+                            take: limit,
+                            where: {
+                                phone: phone ? phone : client_1.Prisma.skip,
+                                pincode: post ? post : client_1.Prisma.skip,
+                            },
+                            orderBy: { created_at: "desc" },
+                        }),
+                        prismaClient_1.prisma.lead_forms.count(),
+                    ])];
+            case 2:
+                _b = _c.sent(), leads = _b[0], total = _b[1];
+                console.log(total, page);
+                res.send({
+                    leads: superjson_1.default.serialize(leads),
+                    total: total,
+                    page: page,
+                    totalPages: Math.ceil(total / limit),
+                });
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _c.sent();
+                console.log(error_4);
+                next(error_4);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllOldLeadForms = getAllOldLeadForms;
 var getAllLeadOfUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, _a, status, saleDate, fromDate, toDate, newSaleDate, nextDay, leads, error_3;
+    var userId, _a, status, saleDate, fromDate, toDate, newSaleDate, nextDay, leads, error_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -270,9 +361,9 @@ var getAllLeadOfUser = function (req, res, next) { return __awaiter(void 0, void
                 res.send(leads);
                 return [3 /*break*/, 4];
             case 3:
-                error_3 = _b.sent();
-                console.log(error_3);
-                next(error_3);
+                error_5 = _b.sent();
+                console.log(error_5);
+                next(error_5);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -280,7 +371,7 @@ var getAllLeadOfUser = function (req, res, next) { return __awaiter(void 0, void
 }); };
 exports.getAllLeadOfUser = getAllLeadOfUser;
 var getLeadOfUserByDate = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, leads, error_4;
+    var userId, leads, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -301,8 +392,8 @@ var getLeadOfUserByDate = function (req, res, next) { return __awaiter(void 0, v
                 res.send(leads);
                 return [3 /*break*/, 4];
             case 3:
-                error_4 = _a.sent();
-                console.log(error_4);
+                error_6 = _a.sent();
+                console.log(error_6);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -323,16 +414,17 @@ var getSingleLead = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getSingleLead = getSingleLead;
 var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, title, firstName, middleName, lastName, address, city, county, pincode, phone, fee, currency, bankName, accountName, sort, dateOfBirth, status, reason, 
+    var id, _a, title, firstName, middleName, lastName, address, city, county, pincode, phone, fee, currency, bankName, accountName, sort, dateOfBirth, closer, verifier, status, reason, 
     //
-    comment, password, poa, initialStatus, finalStatus, lead, statusChangeReason, content, notif, cacheKey, error_5;
+    comment, password, poa, 
+    //
+    process, plan, paymentMethod, bank, card, initialStatus, finalStatus, lead, statusChangeReason, content, notif, cacheKey, error_7;
     var _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa;
-                console.log(phone);
+                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, closer = _a.closer, verifier = _a.verifier, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa, process = _a.process, plan = _a.plan, paymentMethod = _a.paymentMethod, bank = _a.bank, card = _a.card;
                 _d.label = 1;
             case 1:
                 _d.trys.push([1, 7, , 8]);
@@ -355,11 +447,29 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             phone: phone ? phone : client_1.Prisma.skip,
                             fee: fee ? fee : client_1.Prisma.skip,
                             currency: currency ? currency : client_1.Prisma.skip,
-                            bankName: bankName ? bankName : client_1.Prisma.skip,
-                            accountName: accountName ? accountName : client_1.Prisma.skip,
-                            sort: sort ? sort : client_1.Prisma.skip,
+                            bankName: (bank === null || bank === void 0 ? void 0 : bank.bankName) ? bank === null || bank === void 0 ? void 0 : bank.bankName : client_1.Prisma.skip,
+                            accountName: (bank === null || bank === void 0 ? void 0 : bank.accountName)
+                                ? bank === null || bank === void 0 ? void 0 : bank.accountName
+                                : client_1.Prisma.skip,
+                            accountNumber: (bank === null || bank === void 0 ? void 0 : bank.accountNumber)
+                                ? bank === null || bank === void 0 ? void 0 : bank.accountNumber
+                                : client_1.Prisma.skip,
+                            sort: (bank === null || bank === void 0 ? void 0 : bank.sort) ? bank === null || bank === void 0 ? void 0 : bank.sort : client_1.Prisma.skip,
+                            // CARD
+                            cardName: (card === null || card === void 0 ? void 0 : card.name) ? card === null || card === void 0 ? void 0 : card.name : client_1.Prisma.skip,
+                            cardBankName: (card === null || card === void 0 ? void 0 : card.bankName)
+                                ? card === null || card === void 0 ? void 0 : card.bankName
+                                : client_1.Prisma.skip,
+                            cardNumber: (card === null || card === void 0 ? void 0 : card.cardNumber) ? card === null || card === void 0 ? void 0 : card.cardNumber : client_1.Prisma.skip,
+                            cardCvv: (card === null || card === void 0 ? void 0 : card.cvv) ? card === null || card === void 0 ? void 0 : card.cvv : client_1.Prisma.skip,
+                            expiry: (card === null || card === void 0 ? void 0 : card.expiry) ? card === null || card === void 0 ? void 0 : card.expiry : client_1.Prisma.skip,
                             poa: poa ? (poa === "true" ? true : false) : client_1.Prisma.skip,
+                            closerId: closer ? parseInt(closer) : client_1.Prisma.skip,
+                            verifierId: verifier ? parseInt(verifier) : client_1.Prisma.skip,
+                            processId: process ? parseInt(process) : client_1.Prisma.skip,
+                            planId: plan ? parseInt(plan) : client_1.Prisma.skip,
                             comment: comment ? comment : client_1.Prisma.skip,
+                            paymentMethod: paymentMethod ? paymentMethod : client_1.Prisma.skip,
                         },
                         include: {
                             status: { select: { name: true } },
@@ -411,9 +521,9 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 res.send(lead);
                 return [3 /*break*/, 8];
             case 7:
-                error_5 = _d.sent();
-                console.log(error_5);
-                next(error_5);
+                error_7 = _d.sent();
+                console.log(error_7);
+                next(error_7);
                 return [3 /*break*/, 8];
             case 8: return [2 /*return*/];
         }
@@ -421,7 +531,7 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.updateLead = updateLead;
 var deleteLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, lead, error_6;
+    var id, lead, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -433,9 +543,9 @@ var deleteLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 res.send(lead);
                 return [3 /*break*/, 3];
             case 2:
-                error_6 = _a.sent();
-                console.log(error_6);
-                next(error_6);
+                error_8 = _a.sent();
+                console.log(error_8);
+                next(error_8);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

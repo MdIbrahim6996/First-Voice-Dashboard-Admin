@@ -6,7 +6,7 @@ import DeleteModal from "../../components/Modal/DeleteModal";
 import CreateUserModal from "../../components/Modal/CreateUserModal";
 import EditUserModal from "../../components/Modal/EditUserModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteUser, getAllOldUser, getAllUser } from "../../api/user";
+import { deleteUser, getAllOldUser } from "../../api/user";
 import { CSVLink } from "react-csv";
 import UserInfoModal from "../../components/Modal/UserInfoModal/UserInfoModal";
 

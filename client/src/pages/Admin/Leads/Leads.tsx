@@ -229,41 +229,41 @@ const Leads = () => {
         { label: "COMMENT", key: "comment" },
     ];
 
-    const excelLeadsData = newLeads?.map((item: any) => ({
-        status: item?.status?.name?.toUpperCase(),
-        saleDate: item?.saleDate?.substring(0, 10),
-        leadBy: item?.leadBy?.alias?.toUpperCase(),
-        closer: item?.closer?.alias?.toUpperCase(),
-        centre: item?.centre?.toUpperCase(),
-        // PERSONAL
-        title: item?.title?.toUpperCase(),
-        firstName: item?.firstName?.toUpperCase(),
-        middleName: item?.middleName?.toUpperCase(),
-        lastName: item?.lastName?.toUpperCase(),
-        address: item?.address,
-        city: item?.city?.toUpperCase(),
-        county: item?.county?.toUpperCase(),
-        post: item?.pincode,
-        dateOfBirth: item?.dateOfBirth?.substring(0, 10),
-        password: item?.password,
-        phone: item?.phone?.toString(),
-        // PROCESS / PLAN
-        process: item?.process?.name?.toUpperCase(),
-        plan: item?.plan?.name?.toUpperCase(),
-        // BANK
-        paymentMethod: item?.paymentMethod?.toUpperCase(),
-        bankName: item?.bankName?.toUpperCase(),
-        accountName: item?.accountName?.toUpperCase(),
-        accountNumber: item?.accountNumber?.toUpperCase(),
-        sort: item?.sort?.toUpperCase(),
-        // CARD
-        cardName: item?.cardName?.toUpperCase(),
-        cardBankName: item?.cardBankName?.toUpperCase(),
-        cardNumber: item?.cardNumber,
-        cardCvv: item?.cardCvv,
-        expiry: item?.expiry,
-        comment: item?.comment,
-    }));
+    // const excelLeadsData = newLeads?.map((item: any) => ({
+    //     status: item?.status?.name?.toUpperCase(),
+    //     saleDate: item?.saleDate?.substring(0, 10),
+    //     leadBy: item?.leadBy?.alias?.toUpperCase(),
+    //     closer: item?.closer?.alias?.toUpperCase(),
+    //     centre: item?.centre?.toUpperCase(),
+    //     // PERSONAL
+    //     title: item?.title?.toUpperCase(),
+    //     firstName: item?.firstName?.toUpperCase(),
+    //     middleName: item?.middleName?.toUpperCase(),
+    //     lastName: item?.lastName?.toUpperCase(),
+    //     address: item?.address,
+    //     city: item?.city?.toUpperCase(),
+    //     county: item?.county?.toUpperCase(),
+    //     post: item?.pincode,
+    //     dateOfBirth: item?.dateOfBirth?.substring(0, 10),
+    //     password: item?.password,
+    //     phone: item?.phone?.toString(),
+    //     // PROCESS / PLAN
+    //     process: item?.process?.name?.toUpperCase(),
+    //     plan: item?.plan?.name?.toUpperCase(),
+    //     // BANK
+    //     paymentMethod: item?.paymentMethod?.toUpperCase(),
+    //     bankName: item?.bankName?.toUpperCase(),
+    //     accountName: item?.accountName?.toUpperCase(),
+    //     accountNumber: item?.accountNumber?.toUpperCase(),
+    //     sort: item?.sort?.toUpperCase(),
+    //     // CARD
+    //     cardName: item?.cardName?.toUpperCase(),
+    //     cardBankName: item?.cardBankName?.toUpperCase(),
+    //     cardNumber: item?.cardNumber,
+    //     cardCvv: item?.cardCvv,
+    //     expiry: item?.expiry,
+    //     comment: item?.comment,
+    // }));
 
     const applianceHeaders = [];
     for (let i = 0; i < maxAppliances; i++) {

@@ -13,7 +13,6 @@ import EditLeadModal from "../../components/Modal/EditLeadModal";
 import LeadDetailModal from "../../components/Modal/LeadDetailModal";
 import Loader from "../../components/Loader/Loader";
 import EmptyState from "../../components/EmptyState/EmptyState";
-import { getAppliancePerPage } from "../../api/appliance";
 
 const Leads = () => {
     const [phone, setPhone] = useState("");
