@@ -13,7 +13,10 @@ var routes_1 = __importDefault(require("./routes"));
 var errorMiddleware_1 = require("./middlewares/errorMiddleware");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://first-voice-dashboard-admin.onrender.com"],
+    origin: [
+        "http://localhost:5173",
+        "https://first-voice-dashboard-admin.onrender.com",
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
 }));

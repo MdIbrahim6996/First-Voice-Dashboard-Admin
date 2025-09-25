@@ -64,7 +64,6 @@ var createLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
             case 0:
                 _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, centre = _a.centre, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, password = _a.password, dateOfBirth = _a.dateOfBirth, phone = _a.phone, process = _a.process, plan = _a.plan, poa = _a.poa, closer = _a.closer, verifier = _a.verifier, bank = _a.bank, paymentMethod = _a.paymentMethod, shift = _a.shift, comment = _a.comment, card = _a.card, appliances = _a.appliances;
                 date = new Date();
-                console.log(req.body);
                 _c.label = 1;
             case 1:
                 _c.trys.push([1, 7, , 8]);
@@ -231,11 +230,13 @@ var getAllLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.getAllLead = getAllLead;
 var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, phone, post, page, limit, skip, _b, leads, total, error_3;
+    var _a, phone, post, fromDate, toDate, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_3;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.query, phone = _a.phone, post = _a.post;
+                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate;
+                formattedToDate = new Date(toDate);
+                toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
                 page = parseInt(req.query.page) || 1;
                 limit = parseInt(req.query.limit) || 30;
                 skip = (page - 1) * limit;
@@ -249,6 +250,12 @@ var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0,
                             where: {
                                 phone: phone ? phone : client_1.Prisma.skip,
                                 pin: post ? post : client_1.Prisma.skip,
+                                created_at: {
+                                    gte: fromDate
+                                        ? new Date(fromDate)
+                                        : client_1.Prisma.skip,
+                                    lte: toDate ? new Date(toDatePlusOne) : client_1.Prisma.skip,
+                                },
                             },
                             orderBy: { created_at: "desc" },
                         }),
@@ -274,11 +281,13 @@ var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getAllOldLead = getAllOldLead;
 var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, phone, post, page, limit, skip, _b, leads, total, error_4;
+    var _a, phone, post, fromDate, toDate, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.query, phone = _a.phone, post = _a.post;
+                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate;
+                formattedToDate = new Date(toDate);
+                toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
                 page = parseInt(req.query.page) || 1;
                 limit = parseInt(req.query.limit) || 30;
                 skip = (page - 1) * limit;
@@ -292,6 +301,12 @@ var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, vo
                             where: {
                                 phone: phone ? phone : client_1.Prisma.skip,
                                 pincode: post ? post : client_1.Prisma.skip,
+                                created_at: {
+                                    gte: fromDate
+                                        ? new Date(fromDate)
+                                        : client_1.Prisma.skip,
+                                    lte: toDate ? new Date(toDatePlusOne) : client_1.Prisma.skip,
+                                },
                             },
                             orderBy: { created_at: "desc" },
                         }),
@@ -299,7 +314,6 @@ var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, vo
                     ])];
             case 2:
                 _b = _c.sent(), leads = _b[0], total = _b[1];
-                console.log(total, page);
                 res.send({
                     leads: superjson_1.default.serialize(leads),
                     total: total,
@@ -457,9 +471,7 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             sort: (bank === null || bank === void 0 ? void 0 : bank.sort) ? bank === null || bank === void 0 ? void 0 : bank.sort : client_1.Prisma.skip,
                             // CARD
                             cardName: (card === null || card === void 0 ? void 0 : card.name) ? card === null || card === void 0 ? void 0 : card.name : client_1.Prisma.skip,
-                            cardBankName: (card === null || card === void 0 ? void 0 : card.bankName)
-                                ? card === null || card === void 0 ? void 0 : card.bankName
-                                : client_1.Prisma.skip,
+                            cardBankName: (card === null || card === void 0 ? void 0 : card.bankName) ? card === null || card === void 0 ? void 0 : card.bankName : client_1.Prisma.skip,
                             cardNumber: (card === null || card === void 0 ? void 0 : card.cardNumber) ? card === null || card === void 0 ? void 0 : card.cardNumber : client_1.Prisma.skip,
                             cardCvv: (card === null || card === void 0 ? void 0 : card.cvv) ? card === null || card === void 0 ? void 0 : card.cvv : client_1.Prisma.skip,
                             expiry: (card === null || card === void 0 ? void 0 : card.expiry) ? card === null || card === void 0 ? void 0 : card.expiry : client_1.Prisma.skip,

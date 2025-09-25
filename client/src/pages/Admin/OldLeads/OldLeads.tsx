@@ -11,6 +11,9 @@ import { FaFileCsv } from "react-icons/fa";
 const OldLeads = () => {
     const [phone, setPhone] = useState("");
     const [post, setPost] = useState("");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [limit, setLimit] = useState(30);
 
     const topScrollRef = useRef<HTMLDivElement | null>(null);
     const bottomScrollRef = useRef<HTMLDivElement | null>(null);
@@ -35,11 +38,11 @@ const OldLeads = () => {
     });
 
     const [page, setPage] = useState(1);
-    const limit = 30;
 
     const { data, refetch, isLoading, isFetching } = useQuery({
         queryKey: ["old-leadforms", page],
-        queryFn: () => getAllOldLead(phone, post, page, limit),
+        queryFn: () =>
+            getAllOldLead(phone, post, fromDate, toDate, page, limit),
         placeholderData: true,
     });
 
@@ -53,6 +56,8 @@ const OldLeads = () => {
     const resetFilters = () => {
         setPhone("");
         setPost("");
+        setFromDate("");
+        setToDate("");
         refetch();
     };
 
@@ -94,6 +99,8 @@ const OldLeads = () => {
         { label: "COMMENT", key: "comments" },
     ];
 
+    const limitArray = [30, 50, 100, 500, 1000];
+
     return (
         <>
             <div className="overflow-hidden">
@@ -103,7 +110,7 @@ const OldLeads = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0 }}
                     >
-                        <div className="grid grid-cols-4 gap-x-5 gap-y-3">
+                        <div className="grid grid-cols-5 gap-x-3 gap-y-3">
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="phone">Phone</label>
                                 <input
@@ -143,6 +150,47 @@ const OldLeads = () => {
                                     id="post"
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="fromDate">From Date</label>
+                                <input
+                                    type="date"
+                                    name="fromDate"
+                                    value={fromDate}
+                                    id="fromDate"
+                                    onChange={(e) =>
+                                        setFromDate(e.target.value)
+                                    }
+                                    className="border border-gray-400 px-3 py-1 rounded-md outline-none"
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="toDate">To Date</label>
+                                <input
+                                    type="date"
+                                    name="toDate"
+                                    value={toDate}
+                                    id="toDate"
+                                    onChange={(e) => setToDate(e.target.value)}
+                                    className="border border-gray-400 px-3 py-1 rounded-md outline-none"
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="limit">Limit Per Page</label>
+                                <select
+                                    name="limit"
+                                    onChange={(e: any) =>
+                                        setLimit(e?.target?.value)
+                                    }
+                                    id="limit"
+                                    className="border outline-none border-gray-400 px-3 py-1 rounded-md"
+                                >
+                                    {limitArray?.map((item: any) => (
+                                        <option key={item} value={item}>
+                                            {item}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className="mb-10 mt-3 flex items-center gap-2 text-sm">
@@ -288,7 +336,7 @@ const OldLeads = () => {
                                                     scope="row"
                                                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
                                                 >
-                                                    {i + 1}
+                                                    {(page - 1) * limit + i + 1}
                                                 </th>
 
                                                 <td className="px-6 py-4 whitespace-nowrap uppercase">

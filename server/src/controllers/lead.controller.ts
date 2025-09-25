@@ -278,7 +278,9 @@ export const getAllOldLead = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { phone, post } = req.query;
+    const { phone, post, fromDate, toDate } = req.query;
+    let formattedToDate = new Date(toDate as string);
+    let toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 30;
@@ -293,6 +295,12 @@ export const getAllOldLead = async (
                 where: {
                     phone: phone ? (phone as string) : Prisma.skip,
                     pin: post ? (post as string) : Prisma.skip,
+                    created_at: {
+                        gte: fromDate
+                            ? new Date(fromDate as string)
+                            : Prisma.skip,
+                        lte: toDate ? new Date(toDatePlusOne) : Prisma.skip,
+                    },
                 },
                 orderBy: { created_at: "desc" },
             }),
@@ -314,7 +322,9 @@ export const getAllOldLeadForms = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { phone, post } = req.query;
+    const { phone, post, fromDate, toDate } = req.query;
+    let formattedToDate = new Date(toDate as string);
+    let toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 30;
@@ -328,6 +338,12 @@ export const getAllOldLeadForms = async (
                 where: {
                     phone: phone ? (phone as string) : Prisma.skip,
                     pincode: post ? (post as string) : Prisma.skip,
+                    created_at: {
+                        gte: fromDate
+                            ? new Date(fromDate as string)
+                            : Prisma.skip,
+                        lte: toDate ? new Date(toDatePlusOne) : Prisma.skip,
+                    },
                 },
                 orderBy: { created_at: "desc" },
             }),
@@ -499,9 +515,7 @@ export const updateLead = async (
                 sort: bank?.sort ? bank?.sort : Prisma.skip,
                 // CARD
                 cardName: card?.name ? card?.name : Prisma.skip,
-                cardBankName: card?.bankName
-                    ? card?.bankName
-                    : Prisma.skip,
+                cardBankName: card?.bankName ? card?.bankName : Prisma.skip,
                 cardNumber: card?.cardNumber ? card?.cardNumber : Prisma.skip,
                 cardCvv: card?.cvv ? card?.cvv : Prisma.skip,
                 expiry: card?.expiry ? card?.expiry : Prisma.skip,
