@@ -17,7 +17,7 @@ const LeadDetailModal = ({
     });
     const paymentMethod = watch("paymentMethod");
 
-    const { data: applainces } = useQuery({
+    const { data: appliances } = useQuery({
         queryKey: ["appliance", details?.id],
         queryFn: () => getAppliance(details?.id),
     });
@@ -319,63 +319,69 @@ const LeadDetailModal = ({
                                         </p>
                                     </div>
                                 </div>
-                                <h3 className="text-lg font-semibold italic text-black/80 underline">
-                                    Appliance Details
-                                </h3>
+                                {appliances && appliances?.length > 0 && (
+                                    <>
+                                        <h3 className="text-lg font-semibold italic text-black/80 underline">
+                                            Appliance Details
+                                        </h3>
 
-                                <table className="text-sm text-left rtl:text-right text-gray-500 w-full">
-                                    <thead className="text-center text-gray-700 uppercase bg-gray-200">
-                                        <tr>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Sr. No.
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Name
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Make Of Appliance
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3"
-                                            >
-                                                Age
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    {applainces &&
-                                        applainces?.length > 0 &&
-                                        applainces.map(
-                                            (item: any, i: number) => (
-                                                <tr
-                                                    key={item?.id}
-                                                    className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
-                                                >
-                                                    <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                        {i + 1}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                        {item?.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                        {item?.makeOfAppliance}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap uppercase">
-                                                        {item?.age}
-                                                    </td>
+                                        <table className="text-sm text-left rtl:text-right text-gray-500 w-full">
+                                            <thead className="text-center text-gray-700 uppercase bg-gray-200">
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Sr. No.
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Name
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Make Of Appliance
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Age
+                                                    </th>
                                                 </tr>
-                                            )
-                                        )}
-                                </table>
+                                            </thead>
+                                            {appliances &&
+                                                appliances?.length > 0 &&
+                                                appliances.map(
+                                                    (item: any, i: number) => (
+                                                        <tr
+                                                            key={item?.id}
+                                                            className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                        >
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {i + 1}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {item?.name}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {
+                                                                    item?.makeOfAppliance
+                                                                }
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {item?.age}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
+                                        </table>
+                                    </>
+                                )}
 
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-4 my-5">
                                     <div className="flex flex-col text-sm space-y-0.5">

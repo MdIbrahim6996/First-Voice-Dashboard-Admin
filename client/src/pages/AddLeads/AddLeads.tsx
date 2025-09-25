@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { getAllProcess } from "../../api/process";
 import { getAllPlan } from "../../api/plan";
@@ -22,16 +22,16 @@ const AddLeads = () => {
         handleSubmit,
         watch,
         reset,
-        // control,
+        control,
         trigger,
     } = useForm<LeadsFormInput>({
-        defaultValues: {},
+        defaultValues: { centre: "001" },
     });
 
-    // const { fields, append, remove } = useFieldArray({
-    //     control,
-    //     name: "appliances",
-    // });
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "appliances",
+    });
 
     const queryClient = useQueryClient();
 
@@ -50,13 +50,15 @@ const AddLeads = () => {
         queryFn: getAllUser,
     });
 
-    const processValue = watch("process") ? watch("process") : 1;
+    const processValue = watch("process");
+    //  ? watch("process") : 1
     const paymentMethod = watch("paymentMethod");
 
     const filterPlan = (id: number) =>
         plan?.filter((item: any) => id == item?.processId);
 
     // const filterUser = user?.filter((item: any) => item?.role === "user");
+
     const closerVerifierUser = user?.filter(
         (item: any) => item?.role === "closer" || item?.role === "verifier"
     );
@@ -87,6 +89,11 @@ const AddLeads = () => {
         } else {
             unregister("card");
         }
+        if (processValue && +processValue !== 7) {
+            register("appliances");
+        } else {
+            unregister("appliances");
+        }
     }, [register, unregister, paymentMethod]);
 
     const onSubmit: SubmitHandler<LeadsFormInput> = (data) => {
@@ -96,7 +103,6 @@ const AddLeads = () => {
     };
 
     const cardNumber = watch("card.cardNumber");
-
     return (
         <div className="overflow-y-scroll h-full">
             <div className="p-5">
@@ -492,6 +498,110 @@ const AddLeads = () => {
                         </div>
                     </div>
 
+                    {processValue && +processValue !== 3 ? (
+                        <div className="my-5">
+                            <div className="flex justify-between">
+                                <p className="capitalize text underline font-semibold italic">
+                                    applaince details
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        append({
+                                            name: "",
+                                            makeOfAppliance: "",
+                                            age: 0,
+                                        })
+                                    }
+                                    className="bg-blue-700 text-white text-xs font-semibold py-1.5 px-6 mt-2 rounded cursor-pointer"
+                                >
+                                    + Add Fields
+                                </button>
+                            </div>
+                            {fields?.map((field, index) => (
+                                <>
+                                    <div
+                                        key={field.id}
+                                        className="grid grid-cols-3 gap-x-4 gap-y-4 mt-3"
+                                    >
+                                        <div className="flex flex-col text-sm space-y-0.5">
+                                            <label
+                                                htmlFor="appliance"
+                                                className="font-semibold"
+                                            >
+                                                Appliance Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                {...register(
+                                                    `appliances.${index}.name`,
+                                                    {
+                                                        required:
+                                                            "Please Enter Appliance Name.",
+                                                    }
+                                                )}
+                                                id="applianceName"
+                                                placeholder="Nottinghamshire"
+                                                className="border border-gray-400 px-3 py-1 rounded outline-none"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col text-sm space-y-0.5">
+                                            <label
+                                                htmlFor="makeOfAppliance"
+                                                className="font-semibold"
+                                            >
+                                                Make of Appliance
+                                            </label>
+                                            <input
+                                                type="text"
+                                                {...register(
+                                                    `appliances.${index}.makeOfAppliance`,
+                                                    {
+                                                        required:
+                                                            "Please Enter Make of Appliance.",
+                                                    }
+                                                )}
+                                                id="makeOfAppliance"
+                                                placeholder="Make Of Appliance"
+                                                className="border border-gray-400 px-3 py-1 rounded outline-none"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col text-sm space-y-0.5">
+                                            <label
+                                                htmlFor="age"
+                                                className="font-semibold"
+                                            >
+                                                Age
+                                            </label>
+                                            <input
+                                                type="number"
+                                                {...register(
+                                                    `appliances.${index}.age`,
+                                                    {
+                                                        required:
+                                                            "Please Enter Appliance Age.",
+                                                    }
+                                                )}
+                                                id="age"
+                                                placeholder="10"
+                                                className="border border-gray-400 px-3 py-1 rounded-md outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => remove(index)}
+                                        className="bg-red-500 text-white text-xs font-semibold py-0.5 px-6 mt-2 rounded cursor-pointer"
+                                    >
+                                        Remove
+                                    </button>
+                                </>
+                            ))}
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+
                     <div className="grid grid-cols-2 gap-x-4 gap-y-4 my-5">
                         <div className="flex flex-col text-sm space-y-0.5">
                             <label
@@ -510,7 +620,7 @@ const AddLeads = () => {
                                 <option disabled selected value="">
                                     Select a Payment Method
                                 </option>
-                                <option value="cash/cheque">Cash/Cheque</option>
+                                <option value="cash">Cash/Cheque</option>
                                 <option value="directDebit">
                                     Direct Debit (DD)
                                 </option>
@@ -821,51 +931,6 @@ const AddLeads = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* <div className="grid grid-cols-3 gap-x-4 gap-y-4 my-5">
-                        <div className="flex flex-col text-sm space-y-0.5">
-                            <label
-                                htmlFor="appliance"
-                                className="font-semibold"
-                            >
-                                Appliance
-                            </label>
-                            <input
-                                type="text"
-                                name="appliance"
-                                id="appliance"
-                                placeholder="Nottinghamshire"
-                                className="border border-gray-400 px-3 py-1 rounded outline-none"
-                            />
-                        </div>
-                        <div className="flex flex-col text-sm space-y-0.5">
-                            <label
-                                htmlFor="makeOfAppliance"
-                                className="font-semibold"
-                            >
-                                Make of Appliance
-                            </label>
-                            <input
-                                type="text"
-                                name="makeOfAppliance"
-                                id="makeOfAppliance"
-                                placeholder="700001"
-                                className="border border-gray-400 px-3 py-1 rounded outline-none"
-                            />
-                        </div>
-                        <div className="flex flex-col text-sm space-y-0.5">
-                            <label htmlFor="age" className="font-semibold">
-                                Age
-                            </label>
-                            <input
-                                type="text"
-                                name="age"
-                                id="age"
-                                placeholder="***********"
-                                className="border border-gray-400 px-3 py-1 rounded-md outline-none"
-                            />
-                        </div>
-                    </div> */}
 
                     <div className="mb-4">
                         <div className="flex flex-col text-sm space-y-0.5">
