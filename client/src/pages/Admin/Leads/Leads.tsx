@@ -175,7 +175,7 @@ const Leads = () => {
             cardNumber: item?.cardNumber,
             cardCvv: item?.cardCvv,
             expiry: item?.expiry,
-            comment: item?.comment,
+            comment: item?.comment?.replace(/[\r\n]+/g, " "),
             // APPLIANCES
             appliances: flat,
             appliancesLength: applianceArray?.length,
@@ -637,14 +637,15 @@ const Leads = () => {
                                                 scope="col"
                                                 className="px-6 py-3"
                                             >
-                                                Name
+                                                Phone
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3"
                                             >
-                                                Phone
+                                                Name
                                             </th>
+
                                             <th
                                                 scope="col"
                                                 className="px-6 py-3"
@@ -755,14 +756,14 @@ const Leads = () => {
                                                 <td className="px-6 py-4 uppercase">
                                                     {item?.verifier?.alias}
                                                 </td>
+                                                <td className="px-6 py-4">
+                                                    {item?.phone}
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowra uppercase">
                                                     {item?.title}{" "}
                                                     {item?.firstName}{" "}
                                                     {item?.middleName}{" "}
                                                     {item?.lastName}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {item?.phone}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap uppercase">
                                                     {item?.process?.name}
