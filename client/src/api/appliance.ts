@@ -49,3 +49,18 @@ export const updateAppliance = async (id: number, formdata: any) => {
         return error;
     }
 };
+
+export const deleteAppliance = async (id: number) => {
+    try {
+        const { data } = await axiosInstance.delete(`/appliance/${id}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message, {
+                id: "getAppliance",
+            });
+        }
+        return error;
+    }
+};

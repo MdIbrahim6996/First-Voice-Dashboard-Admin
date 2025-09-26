@@ -62,3 +62,20 @@ export const updateAppliance = async (
         next(error);
     }
 };
+export const deleteAppliance = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+    // console.log("appl", id);
+    try {
+        const appliance = await prisma.appliance.delete({
+            where: { id: parseInt(id) },
+        });
+        res.send(appliance);
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};

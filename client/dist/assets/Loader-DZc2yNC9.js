@@ -1,1 +1,0 @@
-import{j as e}from"./index-DodWdPz7.js";function s(){return e.jsx("div",{className:"flex items-center justify-center h-[50vh] w-full",children:e.jsx("div",{className:"w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"})})}export{s as L};

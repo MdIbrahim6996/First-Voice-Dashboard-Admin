@@ -83,6 +83,7 @@ export type UpdateLeadsFormInput = {
     shift: string;
     fee: number;
     currency: string;
+    appliances: { name: string; makeOfAppliance: string; age: number }[];
     bankName: string;
     accountName: string;
     accountNumber: string;

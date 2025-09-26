@@ -480,6 +480,8 @@ export const updateLead = async (
         paymentMethod,
         bank,
         card,
+        //
+        appliances,
     } = req.body;
     // console.log(phone);
     // console.log(req.body);
@@ -487,6 +489,17 @@ export const updateLead = async (
     try {
         let initialStatus = req?.body?.initialStatus as string;
         let finalStatus = "";
+
+        const appliancesArray = appliances?.map((item: any, i: number) => ({
+            ...item,
+            age: +item?.age,
+            leadId: +id,
+        }));
+        console.log(req.body);
+
+        if (appliances && appliances.length > 0) {
+            await prisma.appliance.createMany({ data: appliancesArray });
+        }
 
         const lead = await prisma.lead.update({
             where: { id: parseInt(id) },

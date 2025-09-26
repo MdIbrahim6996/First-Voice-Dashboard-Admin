@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import type { UpdateLeadsFormInput } from "../../types/form.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateLead } from "../../api/lead";
@@ -12,7 +12,8 @@ import { getAllPlan } from "../../api/plan";
 import { getAllUser } from "../../api/user";
 import { useEffect, useState } from "react";
 import EditApplianceModal from "./EditApplianceModal";
-import { getAppliance } from "../../api/appliance";
+import { deleteAppliance, getAppliance } from "../../api/appliance";
+import DeleteModal from "./DeleteModal";
 
 const EditLeadModal = ({
     handleClose,
@@ -23,12 +24,15 @@ const EditLeadModal = ({
 }) => {
     const [cardName, setCardName] = useState("");
     const [showApplianceModal, setShowApplianceModal] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [applainceId, setApplainceId] = useState();
     const [applianceDetail, setApplianceDetail] = useState(null);
     const {
         register,
         unregister,
         trigger,
         handleSubmit,
+        control,
         formState: { errors },
         watch,
     } = useForm<UpdateLeadsFormInput>({
@@ -72,7 +76,10 @@ const EditLeadModal = ({
             status: item?.statusId,
         },
     });
-
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "appliances",
+    });
     const queryClient = useQueryClient();
     const finalStatus = watch("status");
     const statusCheck = watch("status");
@@ -123,7 +130,13 @@ const EditLeadModal = ({
         } else {
             unregister("card");
         }
-    }, [register, unregister, paymentMethod]);
+        if (processValue && +processValue !== 3) {
+            register("appliances");
+        } else {
+            unregister("appliances");
+        }
+    }, [register, unregister, paymentMethod, processValue]);
+
     const editMutation = useMutation({
         mutationFn: updateLead,
         onSuccess: (data) => {
@@ -131,6 +144,21 @@ const EditLeadModal = ({
                 queryClient.invalidateQueries({ queryKey: ["leads"] });
                 toast.success("Edited Successfully.");
                 handleClose();
+            }
+        },
+    });
+
+    const { mutate: deleteApplianceMutation } = useMutation({
+        mutationFn: (id: number) => deleteAppliance(id),
+        onSuccess: (data) => {
+            if (data?.id) {
+                toast.dismiss();
+                queryClient.invalidateQueries({
+                    queryKey: ["appliance"],
+                });
+                toast.success("Deleted Successfully.", {
+                    id: "deleted appliance",
+                });
             }
         },
     });
@@ -144,7 +172,6 @@ const EditLeadModal = ({
         });
     };
     const cardNumber = watch("card.cardNumber");
-
     return (
         <>
             <div
@@ -682,18 +709,134 @@ const EditLeadModal = ({
                                                 />
                                             </div>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setApplianceDetail(item);
-                                                setShowApplianceModal(true);
-                                            }}
-                                            className="bg-green-500 w-fit text-white text-xs font-semibold py-0.5 px-6 mt- rounded cursor-pointer"
-                                        >
-                                            Edit
-                                        </button>
+                                        <div className="flex items-center gap-1 mt-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setApplianceDetail(item);
+                                                    setShowApplianceModal(true);
+                                                }}
+                                                className="bg-green-500 w-fit text-white text-xs font-semibold py-0.5 px-6 mt- rounded cursor-pointer"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setApplainceId(item?.id);
+                                                    setShowDelete(true);
+                                                }}
+                                                className="bg-red-500 w-fit text-white text-xs font-semibold py-0.5 px-6 mt- rounded cursor-pointer"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
+
+                            {processValue && +processValue !== 3 ? (
+                                <div className="my-5">
+                                    <div className="flex justify-between">
+                                        <p className="capitalize text underline font-semibold italic">
+                                            applaince details
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                append({
+                                                    name: "",
+                                                    makeOfAppliance: "",
+                                                    age: 0,
+                                                })
+                                            }
+                                            className="bg-blue-700 text-white text-xs font-semibold py-1.5 px-6 mt-2 rounded cursor-pointer"
+                                        >
+                                            + Add Fields
+                                        </button>
+                                    </div>
+                                    {fields?.map((field, index) => (
+                                        <>
+                                            <div
+                                                key={field.id}
+                                                className="grid grid-cols-3 gap-x-4 gap-y-4 mt-3"
+                                            >
+                                                <div className="flex flex-col text-sm space-y-0.5">
+                                                    <label
+                                                        htmlFor="appliance"
+                                                        className="font-semibold"
+                                                    >
+                                                        Appliance Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        {...register(
+                                                            `appliances.${index}.name`,
+                                                            {
+                                                                required:
+                                                                    "Please Enter Appliance Name.",
+                                                            }
+                                                        )}
+                                                        id="applianceName"
+                                                        placeholder="Nottinghamshire"
+                                                        className="border border-gray-400 px-3 py-1 rounded outline-none"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col text-sm space-y-0.5">
+                                                    <label
+                                                        htmlFor="makeOfAppliance"
+                                                        className="font-semibold"
+                                                    >
+                                                        Make of Appliance
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        {...register(
+                                                            `appliances.${index}.makeOfAppliance`,
+                                                            {
+                                                                required:
+                                                                    "Please Enter Make of Appliance.",
+                                                            }
+                                                        )}
+                                                        id="makeOfAppliance"
+                                                        placeholder="Make Of Appliance"
+                                                        className="border border-gray-400 px-3 py-1 rounded outline-none"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col text-sm space-y-0.5">
+                                                    <label
+                                                        htmlFor="age"
+                                                        className="font-semibold"
+                                                    >
+                                                        Age
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        {...register(
+                                                            `appliances.${index}.age`,
+                                                            {
+                                                                required:
+                                                                    "Please Enter Appliance Age.",
+                                                            }
+                                                        )}
+                                                        id="age"
+                                                        placeholder="10"
+                                                        className="border border-gray-400 px-3 py-1 rounded-md outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => remove(index)}
+                                                className="bg-red-500 text-white text-xs font-semibold py-0.5 px-6 mt-2 rounded cursor-pointer"
+                                            >
+                                                Remove
+                                            </button>
+                                        </>
+                                    ))}
+                                </div>
+                            ) : (
+                                <></>
+                            )}
 
                             <div className="grid grid-cols-2 gap-x-4 gap-y-4 my-5">
                                 <div className="flex flex-col text-sm space-y-0.5">
@@ -1166,6 +1309,12 @@ const EditLeadModal = ({
                 <EditApplianceModal
                     handleClose={() => setShowApplianceModal(false)}
                     detail={applianceDetail}
+                />
+            )}
+            {showDelete && (
+                <DeleteModal
+                    handleClose={() => setShowDelete(false)}
+                    handleDelete={() => deleteApplianceMutation(applainceId!)}
                 />
             )}
         </>
