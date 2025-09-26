@@ -167,8 +167,8 @@ const Leads = () => {
             paymentMethod: item?.paymentMethod?.toUpperCase(),
             bankName: item?.bankName?.toUpperCase(),
             accountName: item?.accountName?.toUpperCase(),
-            accountNumber: item?.accountNumber?.toUpperCase(),
-            sort: item?.sort?.toUpperCase(),
+            accountNumber: item?.accountNumber?.split(" ").join(""),
+            sort: item?.sort?.split(" ").join(""),
             // CARD
             cardName: item?.cardName?.toUpperCase(),
             cardBankName: item?.cardBankName?.toUpperCase(),
@@ -664,7 +664,7 @@ const Leads = () => {
                                         {leads?.map((item: any, i: number) => (
                                             <tr
                                                 key={item?.id}
-                                                className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                className={`text-slate-800 font-semibold capitalize text-center border-b :border-gray-700 border-gray-200`}
                                             >
                                                 <th
                                                     scope="row"

@@ -292,7 +292,7 @@ const OldLeadForms = () => {
                                         {leads?.map((item: any, i: number) => (
                                             <tr
                                                 key={item?.id}
-                                                className={`capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                className={`text-slate-800 font-semibold capitalize text-center border-b :border-gray-700 border-gray-200`}
                                             >
                                                 <th
                                                     scope="row"
