@@ -149,7 +149,7 @@ const Leads = () => {
             closer: item?.closer?.alias?.toUpperCase(),
             centre: item?.centre?.toUpperCase(),
             // PERSONAL
-            title: item?.title?.toUpperCase(),
+            title: item?.title?.toUpperCase()?.slice(0, -1),
             firstName: item?.firstName?.toUpperCase(),
             middleName: item?.middleName?.toUpperCase(),
             lastName: item?.lastName?.toUpperCase(),

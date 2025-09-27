@@ -177,15 +177,15 @@ var getProcessLeadCount = function (req, res, next) { return __awaiter(void 0, v
 }); };
 exports.getProcessLeadCount = getProcessLeadCount;
 var getDailySales = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var date, date2, leads, grouped, error_3;
+    var currentDay, nextDay, leads, grouped, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                date = new Date();
-                date.setUTCHours(0, 0, 0, 0);
-                date2 = new Date();
-                date2.setUTCDate(date.getDate() + 1);
-                date2.setUTCHours(0, 0, 0, 0);
+                currentDay = new Date();
+                currentDay.setUTCHours(0, 0, 0, 0);
+                nextDay = new Date();
+                nextDay.setUTCHours(0, 0, 0, 0);
+                nextDay.setUTCDate(nextDay.getUTCDate() + 1);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
@@ -196,7 +196,10 @@ var getDailySales = function (req, res, next) { return __awaiter(void 0, void 0,
                             createdAt: true,
                             leadBy: { select: { alias: true, id: true } },
                         },
-                        where: { processId: { not: null } },
+                        where: {
+                            processId: { not: null },
+                            createdAt: { gte: currentDay, lte: nextDay },
+                        },
                     })];
             case 2:
                 leads = _a.sent();

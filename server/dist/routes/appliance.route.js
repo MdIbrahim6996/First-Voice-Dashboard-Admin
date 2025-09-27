@@ -6,4 +6,5 @@ var router = (0, express_1.Router)();
 router.post("/appliance-per-page", appliance_controller_1.getAppliancePerPage);
 router.get("/:leadId", appliance_controller_1.getAppliances);
 router.put("/:id", appliance_controller_1.updateAppliance);
+router.delete("/:id", appliance_controller_1.deleteAppliance);
 exports.default = router;

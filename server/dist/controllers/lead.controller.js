@@ -432,67 +432,76 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
     //
     comment, password, poa, 
     //
-    process, plan, paymentMethod, bank, card, initialStatus, finalStatus, lead, statusChangeReason, content, notif, cacheKey, error_7;
+    process, plan, paymentMethod, bank, card, 
+    //
+    appliances, initialStatus, finalStatus, appliancesArray, lead, statusChangeReason, content, notif, cacheKey, error_7;
     var _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, closer = _a.closer, verifier = _a.verifier, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa, process = _a.process, plan = _a.plan, paymentMethod = _a.paymentMethod, bank = _a.bank, card = _a.card;
+                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, closer = _a.closer, verifier = _a.verifier, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa, process = _a.process, plan = _a.plan, paymentMethod = _a.paymentMethod, bank = _a.bank, card = _a.card, appliances = _a.appliances;
                 _d.label = 1;
             case 1:
-                _d.trys.push([1, 7, , 8]);
+                _d.trys.push([1, 9, , 10]);
                 initialStatus = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.initialStatus;
                 finalStatus = "";
-                return [4 /*yield*/, prismaClient_1.prisma.lead.update({
-                        where: { id: parseInt(id) },
-                        data: {
-                            dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : client_1.Prisma.skip,
-                            statusId: status ? parseInt(status) : client_1.Prisma.skip,
-                            title: title ? title : client_1.Prisma.skip,
-                            firstName: firstName ? firstName : client_1.Prisma.skip,
-                            middleName: middleName ? middleName : client_1.Prisma.skip,
-                            lastName: lastName ? lastName : client_1.Prisma.skip,
-                            address: address ? address : client_1.Prisma.skip,
-                            city: city ? city : client_1.Prisma.skip,
-                            county: county ? county : client_1.Prisma.skip,
-                            pincode: pincode ? pincode : client_1.Prisma.skip,
-                            password: password ? password : client_1.Prisma.skip,
-                            phone: phone ? phone : client_1.Prisma.skip,
-                            fee: fee ? fee : client_1.Prisma.skip,
-                            currency: currency ? currency : client_1.Prisma.skip,
-                            bankName: (bank === null || bank === void 0 ? void 0 : bank.bankName) ? bank === null || bank === void 0 ? void 0 : bank.bankName : client_1.Prisma.skip,
-                            accountName: (bank === null || bank === void 0 ? void 0 : bank.accountName)
-                                ? bank === null || bank === void 0 ? void 0 : bank.accountName
-                                : client_1.Prisma.skip,
-                            accountNumber: (bank === null || bank === void 0 ? void 0 : bank.accountNumber)
-                                ? bank === null || bank === void 0 ? void 0 : bank.accountNumber
-                                : client_1.Prisma.skip,
-                            sort: (bank === null || bank === void 0 ? void 0 : bank.sort) ? bank === null || bank === void 0 ? void 0 : bank.sort : client_1.Prisma.skip,
-                            // CARD
-                            cardName: (card === null || card === void 0 ? void 0 : card.name) ? card === null || card === void 0 ? void 0 : card.name : client_1.Prisma.skip,
-                            cardBankName: (card === null || card === void 0 ? void 0 : card.bankName) ? card === null || card === void 0 ? void 0 : card.bankName : client_1.Prisma.skip,
-                            cardNumber: (card === null || card === void 0 ? void 0 : card.cardNumber) ? card === null || card === void 0 ? void 0 : card.cardNumber : client_1.Prisma.skip,
-                            cardCvv: (card === null || card === void 0 ? void 0 : card.cvv) ? card === null || card === void 0 ? void 0 : card.cvv : client_1.Prisma.skip,
-                            expiry: (card === null || card === void 0 ? void 0 : card.expiry) ? card === null || card === void 0 ? void 0 : card.expiry : client_1.Prisma.skip,
-                            poa: poa ? (poa === "true" ? true : false) : client_1.Prisma.skip,
-                            closerId: closer ? parseInt(closer) : client_1.Prisma.skip,
-                            verifierId: verifier ? parseInt(verifier) : client_1.Prisma.skip,
-                            processId: process ? parseInt(process) : client_1.Prisma.skip,
-                            planId: plan ? parseInt(plan) : client_1.Prisma.skip,
-                            comment: comment ? comment : client_1.Prisma.skip,
-                            paymentMethod: paymentMethod ? paymentMethod : client_1.Prisma.skip,
-                        },
-                        include: {
-                            status: { select: { name: true } },
-                            closer: { select: { id: true } },
-                        },
-                    })];
+                appliancesArray = appliances === null || appliances === void 0 ? void 0 : appliances.map(function (item, i) { return (__assign(__assign({}, item), { age: +(item === null || item === void 0 ? void 0 : item.age), leadId: +id })); });
+                console.log(req.body);
+                if (!(appliances && appliances.length > 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, prismaClient_1.prisma.appliance.createMany({ data: appliancesArray })];
             case 2:
+                _d.sent();
+                _d.label = 3;
+            case 3: return [4 /*yield*/, prismaClient_1.prisma.lead.update({
+                    where: { id: parseInt(id) },
+                    data: {
+                        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : client_1.Prisma.skip,
+                        statusId: status ? parseInt(status) : client_1.Prisma.skip,
+                        title: title ? title : client_1.Prisma.skip,
+                        firstName: firstName ? firstName : client_1.Prisma.skip,
+                        middleName: middleName ? middleName : client_1.Prisma.skip,
+                        lastName: lastName ? lastName : client_1.Prisma.skip,
+                        address: address ? address : client_1.Prisma.skip,
+                        city: city ? city : client_1.Prisma.skip,
+                        county: county ? county : client_1.Prisma.skip,
+                        pincode: pincode ? pincode : client_1.Prisma.skip,
+                        password: password ? password : client_1.Prisma.skip,
+                        phone: phone ? phone : client_1.Prisma.skip,
+                        fee: fee ? fee : client_1.Prisma.skip,
+                        currency: currency ? currency : client_1.Prisma.skip,
+                        bankName: (bank === null || bank === void 0 ? void 0 : bank.bankName) ? bank === null || bank === void 0 ? void 0 : bank.bankName : client_1.Prisma.skip,
+                        accountName: (bank === null || bank === void 0 ? void 0 : bank.accountName)
+                            ? bank === null || bank === void 0 ? void 0 : bank.accountName
+                            : client_1.Prisma.skip,
+                        accountNumber: (bank === null || bank === void 0 ? void 0 : bank.accountNumber)
+                            ? bank === null || bank === void 0 ? void 0 : bank.accountNumber
+                            : client_1.Prisma.skip,
+                        sort: (bank === null || bank === void 0 ? void 0 : bank.sort) ? bank === null || bank === void 0 ? void 0 : bank.sort : client_1.Prisma.skip,
+                        // CARD
+                        cardName: (card === null || card === void 0 ? void 0 : card.name) ? card === null || card === void 0 ? void 0 : card.name : client_1.Prisma.skip,
+                        cardBankName: (card === null || card === void 0 ? void 0 : card.bankName) ? card === null || card === void 0 ? void 0 : card.bankName : client_1.Prisma.skip,
+                        cardNumber: (card === null || card === void 0 ? void 0 : card.cardNumber) ? card === null || card === void 0 ? void 0 : card.cardNumber : client_1.Prisma.skip,
+                        cardCvv: (card === null || card === void 0 ? void 0 : card.cvv) ? card === null || card === void 0 ? void 0 : card.cvv : client_1.Prisma.skip,
+                        expiry: (card === null || card === void 0 ? void 0 : card.expiry) ? card === null || card === void 0 ? void 0 : card.expiry : client_1.Prisma.skip,
+                        poa: poa ? (poa === "true" ? true : false) : client_1.Prisma.skip,
+                        closerId: closer ? parseInt(closer) : client_1.Prisma.skip,
+                        verifierId: verifier ? parseInt(verifier) : client_1.Prisma.skip,
+                        processId: process ? parseInt(process) : client_1.Prisma.skip,
+                        planId: plan ? parseInt(plan) : client_1.Prisma.skip,
+                        comment: comment ? comment : client_1.Prisma.skip,
+                        paymentMethod: paymentMethod ? paymentMethod : client_1.Prisma.skip,
+                    },
+                    include: {
+                        status: { select: { name: true } },
+                        closer: { select: { id: true } },
+                    },
+                })];
+            case 4:
                 lead = _d.sent();
                 finalStatus = (_c = lead === null || lead === void 0 ? void 0 : lead.status) === null || _c === void 0 ? void 0 : _c.name;
                 statusChangeReason = void 0;
-                if (!reason) return [3 /*break*/, 4];
+                if (!reason) return [3 /*break*/, 6];
                 return [4 /*yield*/, prismaClient_1.prisma.statusChangeReason.create({
                         data: {
                             reason: reason,
@@ -502,14 +511,14 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             toStatus: finalStatus,
                         },
                     })];
-            case 3:
+            case 5:
                 statusChangeReason = _d.sent();
-                _d.label = 4;
-            case 4:
+                _d.label = 6;
+            case 6:
                 content = reason
                     ? "Lead created on ".concat(new Date(lead === null || lead === void 0 ? void 0 : lead.saleDate).toDateString(), " changed status from ").concat(initialStatus === null || initialStatus === void 0 ? void 0 : initialStatus.toUpperCase(), " to ").concat(finalStatus === null || finalStatus === void 0 ? void 0 : finalStatus.toUpperCase(), " \n\nREASON:\n ").concat(reason)
                     : "Lead created on ".concat(new Date(lead === null || lead === void 0 ? void 0 : lead.saleDate).toDateString(), " changed status from ").concat(initialStatus === null || initialStatus === void 0 ? void 0 : initialStatus.toUpperCase(), " to ").concat(finalStatus === null || finalStatus === void 0 ? void 0 : finalStatus.toUpperCase());
-                if (!(initialStatus !== finalStatus)) return [3 /*break*/, 6];
+                if (!(initialStatus !== finalStatus)) return [3 /*break*/, 8];
                 return [4 /*yield*/, prismaClient_1.prisma.notification.create({
                         data: {
                             type: "important",
@@ -519,25 +528,25 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
                         },
                     })];
-            case 5:
+            case 7:
                 notif = _d.sent();
                 if (notif === null || notif === void 0 ? void 0 : notif.id) {
                     pusher_1.pusher.trigger("lead", "status-change-".concat(lead === null || lead === void 0 ? void 0 : lead.leadByUserId), {
                         notif: notif,
                     });
                 }
-                _d.label = 6;
-            case 6:
+                _d.label = 8;
+            case 8:
                 cacheKey = "userprofile_".concat(lead === null || lead === void 0 ? void 0 : lead.leadByUserId);
                 cache_1.cache.del(cacheKey);
                 res.send(lead);
-                return [3 /*break*/, 8];
-            case 7:
+                return [3 /*break*/, 10];
+            case 9:
                 error_7 = _d.sent();
                 console.log(error_7);
                 next(error_7);
-                return [3 /*break*/, 8];
-            case 8: return [2 /*return*/];
+                return [3 /*break*/, 10];
+            case 10: return [2 /*return*/];
         }
     });
 }); };

@@ -120,11 +120,18 @@ export const getDailySales = async (
     res: Response,
     next: NextFunction
 ) => {
-    const date = new Date();
-    date.setUTCHours(0, 0, 0, 0);
-    const date2 = new Date();
-    date2.setUTCDate(date.getDate() + 1);
-    date2.setUTCHours(0, 0, 0, 0);
+    // const date = new Date();
+    // date.setUTCHours(0, 0, 0, 0);
+    // const date2 = new Date();
+    // date2.setUTCDate(date.getDate() + 1);
+    // date2.setUTCHours(0, 0, 0, 0);
+
+    const currentDay = new Date();
+    currentDay.setUTCHours(0, 0, 0, 0);
+
+    const nextDay = new Date();
+    nextDay.setUTCHours(0, 0, 0, 0);
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 
     try {
         const leads = await prisma.lead.findMany({
@@ -134,7 +141,10 @@ export const getDailySales = async (
                 createdAt: true,
                 leadBy: { select: { alias: true, id: true } },
             },
-            where: { processId: { not: null } },
+            where: {
+                processId: { not: null },
+                createdAt: { gte: currentDay, lte: nextDay },
+            },
         });
 
         const grouped = leads.reduce((acc, lead) => {

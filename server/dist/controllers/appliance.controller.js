@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAppliance = exports.getAppliancePerPage = exports.getAppliances = void 0;
+exports.deleteAppliance = exports.updateAppliance = exports.getAppliancePerPage = exports.getAppliances = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var client_1 = require("@prisma/client");
 var getAppliances = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -129,3 +129,29 @@ var updateAppliance = function (req, res, next) { return __awaiter(void 0, void 
     });
 }); };
 exports.updateAppliance = updateAppliance;
+var deleteAppliance = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, appliance, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, prismaClient_1.prisma.appliance.delete({
+                        where: { id: parseInt(id) },
+                    })];
+            case 2:
+                appliance = _a.sent();
+                res.send(appliance);
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _a.sent();
+                console.log(error_4);
+                next(error_4);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.deleteAppliance = deleteAppliance;
