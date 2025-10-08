@@ -178,6 +178,9 @@ export const getAllLead = async (
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
+    // console.log("from", new Date(fromDate as string));
+    // console.log("to", new Date(toDate as string));
+
     try {
         const newSaleDate = new Date(saleDate as string);
         const nextDay = new Date(saleDate as string);

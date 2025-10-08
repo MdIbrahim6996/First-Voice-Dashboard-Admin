@@ -37,6 +37,3 @@ app.use(errorMiddleware_1.notFound);
 app.use(errorMiddleware_1.errorHandler);
 var PORT = 4000;
 app.listen(PORT, function () { return console.log("Server Listening at PORT ".concat(PORT)); });
-var sal = ["Mr.", "Miss", "Mrs.", "fsdf."];
-var newsal = sal === null || sal === void 0 ? void 0 : sal.map(function (item) { return item === null || item === void 0 ? void 0 : item.split(".").join(""); });
-console.log(newsal);

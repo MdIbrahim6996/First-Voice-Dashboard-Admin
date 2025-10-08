@@ -121,7 +121,7 @@ const Leads = () => {
     const leadIds = leads?.map((item: any) => item?.id) ?? [];
 
     const { data: allApplainces } = useQuery({
-        queryKey: ["allAppliances", page],
+        queryKey: ["allAppliances", page, leads],//fetches appliances when page or leads array changes.
         queryFn: () => getAppliancePerPage(leadIds),
         enabled: leadIds?.length > 0, // 🔑 this prevents early fetch
     });
@@ -671,7 +671,7 @@ const Leads = () => {
                                                     scope="row"
                                                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
                                                 >
-                                                    {i + 1}
+                                                    {(page - 1) * limit + i + 1}
                                                 </th>
                                                 <td className="px-6 py-4 flex flex-col gap-1 items-center">
                                                     <button
