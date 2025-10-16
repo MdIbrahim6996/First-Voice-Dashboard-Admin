@@ -498,7 +498,7 @@ export const updateLead = async (
             age: +item?.age,
             leadId: +id,
         }));
-        console.log(req.body);
+        // console.log(req.body);
 
         if (appliances && appliances.length > 0) {
             await prisma.appliance.createMany({ data: appliancesArray });
@@ -549,12 +549,15 @@ export const updateLead = async (
             },
         });
         finalStatus = lead?.status?.name as string;
-
+        console.log("in", initialStatus);
+        console.log("final", finalStatus);
         let statusChangeReason;
-        if (reason) {
+        if (reason || finalStatus !== initialStatus) {
+            console.log("inside");
+
             statusChangeReason = await prisma.statusChangeReason.create({
                 data: {
-                    reason,
+                    reason: reason ? reason : "",
                     leadId: lead?.id,
                     userId: lead?.closerId!,
                     fromStatus: initialStatus,

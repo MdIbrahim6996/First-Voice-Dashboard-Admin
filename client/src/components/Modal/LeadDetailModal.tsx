@@ -22,6 +22,8 @@ const LeadDetailModal = ({
         queryFn: () => getAppliance(details?.id),
     });
 
+    console.log(details);
+
     return (
         <>
             <div
@@ -48,6 +50,69 @@ const LeadDetailModal = ({
                                 transition={{ duration: 0.5 }}
                                 autoComplete="off"
                             >
+                                {details?.StatusChangeReason?.length > 0 && (
+                                    <>
+                                        <h3 className="text-lg font-semibold italic text-black/80 underline">
+                                            Status Changes Details
+                                        </h3>
+
+                                        <table className="text-sm text-left rtl:text-right text-gray-500 w-full">
+                                            <thead className="text-center text-gray-700 uppercase bg-gray-200">
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Sr. No.
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        From
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        To
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Reason
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            {details?.StatusChangeReason
+                                                ?.length > 0 &&
+                                                details?.StatusChangeReason.map(
+                                                    (item: any, i: number) => (
+                                                        <tr
+                                                            key={item?.id}
+                                                            className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                        >
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {i + 1}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {item?.fromStatus}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {
+                                                                    item?.toStatus
+                                                                }
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {item?.reason}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
+                                        </table>
+                                    </>
+                                )}
                                 <div className="flex items-center justify-between">
                                     <p className="mb-4 text-2xl font-semibold italic text-black/80 underline">
                                         Customer Information

@@ -121,10 +121,19 @@ const Leads = () => {
     const leadIds = leads?.map((item: any) => item?.id) ?? [];
 
     const { data: allApplainces } = useQuery({
-        queryKey: ["allAppliances", page, leads],//fetches appliances when page or leads array changes.
+        queryKey: ["allAppliances", page, leads], //fetches appliances when page or leads array changes.
         queryFn: () => getAppliancePerPage(leadIds),
         enabled: leadIds?.length > 0, // 🔑 this prevents early fetch
     });
+
+    const maxStatusChanges =
+        leads && leads.length > 0
+            ? Math.max(
+                  ...leads.map(
+                      (lead: any) => lead.StatusChangeReason?.length || 0
+                  )
+              )
+            : 0;
 
     const newLeads = leads?.map((item: any) => {
         let applianceArray: any = [];
@@ -135,12 +144,23 @@ const Leads = () => {
             }
         }
         const flat: any = {};
+        const flatStatusChangeReason: any = {};
 
         applianceArray.forEach((appl: any, idx: number) => {
             const i = idx + 1;
             flat[`name_${i}`] = appl.name?.toUpperCase();
             flat[`make_${i}`] = appl.makeOfAppliance?.toUpperCase();
             flat[`age_${i}`] = appl.age;
+        });
+
+        item?.StatusChangeReason.forEach((statusChange: any, idx: number) => {
+            const i = idx + 1;
+            flatStatusChangeReason[`from_${i}`] =
+                statusChange?.fromStatus?.toUpperCase();
+            flatStatusChangeReason[`to_${i}`] =
+                statusChange?.toStatus?.toUpperCase();
+            flatStatusChangeReason[`reason_${i}`] =
+                statusChange?.reason?.toUpperCase();
         });
         return {
             status: item?.status?.name?.toUpperCase(),
@@ -179,6 +199,7 @@ const Leads = () => {
             // APPLIANCES
             appliances: flat,
             appliancesLength: applianceArray?.length,
+            statusChange: flatStatusChangeReason,
         };
     });
 
@@ -280,7 +301,27 @@ const Leads = () => {
         );
     }
 
-    const newHeaders = [...headers, ...applianceHeaders];
+    const statusChangeReasonHeaders = [];
+
+    for (let i = 0; i < maxStatusChanges; i++) {
+        statusChangeReasonHeaders.push(
+            {
+                label: `FROM STATUS ${i + 1}`,
+                key: `statusChange.from_${i + 1}`,
+            },
+            {
+                label: `TO STATUS ${i + 1}`,
+                key: `statusChange.to_${i + 1}`,
+            },
+            { label: `REASON ${i + 1}`, key: `statusChange.reason_${i + 1}` }
+        );
+    }
+
+    const newHeaders = [
+        ...headers,
+        ...statusChangeReasonHeaders,
+        ...applianceHeaders,
+    ];
     // console.log(newHeaders);
 
     const resetFilters = () => {

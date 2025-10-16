@@ -32,7 +32,6 @@ const Login = () => {
                 ...userData,
             });
             if (data) {
-                console.log("login", data);
                 setUser(data);
                 localStorage.setItem("authUser", JSON.stringify(data));
                 if (data?.user?.role === "superadmin") navigate("/superadmin");
