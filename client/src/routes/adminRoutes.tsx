@@ -59,6 +59,13 @@ export const adminRoutes: RouteObject = {
             },
         },
         {
+            path: "users",
+            async lazy() {
+                let Users = await import("../pages/Admin/Users/Users");
+                return { Component: Users.default };
+            },
+        },
+        {
             path: "*",
             element: <NotFoundPage />,
         },

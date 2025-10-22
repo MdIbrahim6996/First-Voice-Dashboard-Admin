@@ -3,6 +3,7 @@ import { useState } from "react";
 import ProfileComp from "./elements/ProfileComp";
 import NotificationComp from "./elements/NotificationComp";
 import AttendanceComp from "./elements/AttendanceComp";
+import MonthlyLeads from "./elements/MonthlyLeads";
 
 const UserInfoModal = ({
     handleClose,
@@ -14,12 +15,16 @@ const UserInfoModal = ({
     const [selectedTab, setSelectedTab] = useState("profile");
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+        <div
+            onClick={handleClose}
+            className="fixed inset-0 flex items-center justify-center bg-black/60 z-50"
+        >
             <motion.div
                 initial={{ opacity: 0.5, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="bg-white rounded-lg shadow-lg w-full max-w-5xl overflow-y-scroll max-h-[90vh]"
+                className="bg-white rounded-lg shadow-lg w-full max-w-5xl overflow-y-scroll max-h-[100vh]"
+                onClick={(e) => e.stopPropagation()}
             >
                 <div className="">
                     <p className="bg-gray-200 py-2 px-6 text-xl">
@@ -53,6 +58,16 @@ const UserInfoModal = ({
                                 attendance
                             </button>
                             <button
+                                onClick={() => setSelectedTab("leads")}
+                                className={` ${
+                                    selectedTab === "leads"
+                                        ? "bg-white font-[500]"
+                                        : "bg-slate-200"
+                                } rounded-md flex-1 text-center capitalize m-1 cursor-pointer hover:font-[500]`}
+                            >
+                                leads
+                            </button>
+                            <button
                                 onClick={() => setSelectedTab("notifications")}
                                 className={` ${
                                     selectedTab === "notifications"
@@ -71,6 +86,7 @@ const UserInfoModal = ({
                 {selectedTab === "attendance" && (
                     <AttendanceComp userId={userId} />
                 )}
+                {selectedTab === "leads" && <MonthlyLeads userId={userId} />}
                 {selectedTab === "notifications" && (
                     <NotificationComp userId={userId} />
                 )}

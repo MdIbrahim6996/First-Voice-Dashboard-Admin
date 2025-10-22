@@ -447,7 +447,6 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 initialStatus = (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.initialStatus;
                 finalStatus = "";
                 appliancesArray = appliances === null || appliances === void 0 ? void 0 : appliances.map(function (item, i) { return (__assign(__assign({}, item), { age: +(item === null || item === void 0 ? void 0 : item.age), leadId: +id })); });
-                console.log(req.body);
                 if (!(appliances && appliances.length > 0)) return [3 /*break*/, 3];
                 return [4 /*yield*/, prismaClient_1.prisma.appliance.createMany({ data: appliancesArray })];
             case 2:

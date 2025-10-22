@@ -4,9 +4,9 @@ import { axiosInstance } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
 
 //COMMON
-export const getAllUser = async () => {
+export const getAllUser = async (name?: string) => {
     try {
-        const { data } = await axiosInstance.get(`/user`);
+        const { data } = await axiosInstance.get(`/user?name=${name || ""}`);
         return data;
     } catch (error) {
         console.log(error);
@@ -73,11 +73,26 @@ export const deleteUser = async (id: number) => {
         return error;
     }
 };
+//SUPERADMIN
+export const getUserYearlyLeads = async (id: number) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `${SERVER_URL}/user/${id}/yearly-leads`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
 // USER
 export const getUserInfo = async (id: number, time: string) => {
     try {
         const { data } = await axiosInstance.get(
-            `${SERVER_URL}/user/profile/${id}?time=${time}`
+            `${SERVER_URL}/user/${id}?time=${time}`
         );
         return data;
     } catch (error) {

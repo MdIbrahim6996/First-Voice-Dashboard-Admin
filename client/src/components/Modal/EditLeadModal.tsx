@@ -100,7 +100,7 @@ const EditLeadModal = ({
 
     const { data: user } = useQuery({
         queryKey: ["user"],
-        queryFn: getAllUser,
+        queryFn: () => getAllUser(),
     });
 
     const { data: applainces } = useQuery({
@@ -183,7 +183,7 @@ const EditLeadModal = ({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     className="bg-white rounded-lg shadow-lg w-full max-w-5xl h-[90vh] overflow-y-scroll"
-                    onClick={(e) => e.stopPropagation()} // <-- STOP click from reaching overlay
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <div className="">
                         <p className="bg-gray-200 py-2 px-6 text-xl">

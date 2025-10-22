@@ -63,6 +63,7 @@ const RootLayout = () => {
         if (!user) navigate("/login");
         if (user?.role === "admin") navigate("/admin");
         else if (user?.role === "superadmin") navigate("/superadmin");
+        else if (user?.role === "accountant") navigate("/accountant");
     }, [user]);
     // console.log(user);
 

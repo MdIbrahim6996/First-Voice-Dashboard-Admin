@@ -1,54 +1,132 @@
 import { useQuery } from "@tanstack/react-query";
-import { Bar } from "react-chartjs-2";
 import { getUserMonthWiseAttendance } from "../../../../api/userAttendance";
+import { motion } from "motion/react";
+import { Scheduler } from "@aldabil/react-scheduler";
 
 const AttendanceComp = ({ userId }: { userId: number }) => {
     const { data = [] } = useQuery({
-        queryKey: ["bar-chart"],
+        queryKey: [userId, "month-wise-attendance"],
         queryFn: () => getUserMonthWiseAttendance(userId),
     });
 
-    console.log(data);
-    let groupdata = {
-        labels: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ],
-        datasets: [
-            {
-                label: "ON TIME",
-                fillColor: "blue",
-                data: data?.graphData?.ontimeArray,
-            },
-            {
-                label: "LATE",
-                fillColor: "red",
-                data: data?.graphData?.lateArray,
-            },
-        ],
+    console.log(data, "attendance data");
+
+    const getFormattedTime = (date: Date) => {
+        const initialDate = new Date(date);
+
+        const year = initialDate.getFullYear();
+        const month = initialDate.getMonth() + 1;
+        const day = initialDate.getDate();
+        const hours = initialDate.getHours();
+        const minutes = initialDate.getMinutes();
+
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+        const formattedDate = `${year}/${month}/${day} ${hours}:${formattedMinutes}`;
+
+        return formattedDate;
     };
+
+    const events = data?.map((item: any) => ({
+        event_id: item?.id,
+        title: (
+            <motion.p
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 1 }}
+            >
+                {item?.isLate ? "LATE" : "ON TIME"}
+            </motion.p>
+        ),
+        start: new Date(getFormattedTime(item?.dateTime)),
+        end: new Date(getFormattedTime(item?.dateTime)),
+        subtitle: `Mark Time: ${new Date(item?.dateTime)}`,
+        color: item?.isLate ? "#C81D11" : "#0B6623",
+        allDay: true,
+    }));
+
+    // const { data: leadData = [] } = useQuery({
+    //     queryKey: [`profile-${userId}`],
+    //     queryFn: () => getUserInfo(userId, time),
+    // });
+    console.log(data);
+    // let groupdata = {
+    //     labels: [
+    //         "Jan",
+    //         "Feb",
+    //         "Mar",
+    //         "Apr",
+    //         "May",
+    //         "Jun",
+    //         "Jul",
+    //         "Aug",
+    //         "Sep",
+    //         "Oct",
+    //         "Nov",
+    //         "Dec",
+    //     ],
+    //     datasets: [
+    //         {
+    //             label: "ON TIME",
+    //             fillColor: "blue",
+    //             data: data?.graphData?.ontimeArray,
+    //         },
+    //         {
+    //             label: "LATE",
+    //             fillColor: "red",
+    //             data: data?.graphData?.lateArray,
+    //         },
+    //     ],
+    // };
     return (
-        <div className="shadow-xl p-4 rounded-md w-[80%] mx-auto">
-            <p className="text-xl uppercase mb-3 font-semibold">
-                monthly overview
-            </p>
-            <div className="h-[20rem] mx-auto w-fi">
-                <Bar
-                    data={groupdata}
-                    options={{ maintainAspectRatio: false }}
-                />
+        <motion.div
+            initial={{
+                opacity: 0,
+                y: -20,
+            }}
+            animate={{
+                opacity: 1,
+                y: 0,
+            }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+        >
+            <div className="p-5 max-h-screen">
+                {data && (
+                    <Scheduler
+                        height={400}
+                        dialogMaxWidth={"xs"}
+                        view="month"
+                        month={{
+                            weekDays: [0, 1, 2, 3, 4, 5, 6],
+                            step: 1,
+                            weekStartOn: 0,
+                            startHour: 9,
+                            endHour: 17,
+                            navigation: true,
+                            cellRenderer: () => (
+                                <div className="border border-slate-400 h-full rounded-lg"></div>
+                            ),
+                        }}
+                        week={{
+                            weekDays: [0, 1, 2, 3, 4, 5, 6],
+                            step: 60,
+                            weekStartOn: 0,
+                            startHour: 9,
+                            endHour: 24,
+                            navigation: true,
+                            cellRenderer: () => {
+                                return (
+                                    <div className="border border-slate-400 h-full rounded-lg"></div>
+                                );
+                            },
+                        }}
+                        events={events}
+                        agenda={false}
+                        editable={false}
+                        deletable={false}
+                    />
+                )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

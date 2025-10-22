@@ -67,7 +67,7 @@ const Leads = () => {
     });
     const { data: userData } = useQuery({
         queryKey: ["user"],
-        queryFn: getAllUser,
+        queryFn: () => getAllUser(),
     });
     const filteredUsers = userData?.filter(
         (item: any) => item?.role === "user"

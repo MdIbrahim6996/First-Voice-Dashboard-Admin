@@ -41,7 +41,7 @@ export const getSingleEmployeeEveryAttendance = async (id: number) => {
 export const getUserMonthWiseAttendance = async (id: number) => {
     try {
         const { data } = await axiosInstance.get(
-            `${SERVER_URL}/user/profile/${id}/yearly`
+            `${SERVER_URL}/user/${id}/yearly-attendance`
         );
         return data;
     } catch (error) {

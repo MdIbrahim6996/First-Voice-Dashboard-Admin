@@ -171,6 +171,7 @@ const EditUserModal = ({
                             <option value="superadmin">SUPERADMIN</option>
                             <option value="user">USER</option>
                             <option value="closer">CLOSER</option>
+                            <option value="accountant">ACCOUNTANT</option>
                         </select>
                     </div>
                     <div>

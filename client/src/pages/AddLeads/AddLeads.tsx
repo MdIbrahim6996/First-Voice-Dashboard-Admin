@@ -47,7 +47,7 @@ const AddLeads = () => {
 
     const { data: user } = useQuery({
         queryKey: ["user"],
-        queryFn: getAllUser,
+        queryFn: () => getAllUser(),
     });
 
     const processValue = watch("process");

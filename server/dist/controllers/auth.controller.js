@@ -123,6 +123,7 @@ var loginController = function (req, res, next) { return __awaiter(void 0, void 
                     //         redirectUrl: "http://localhost:4000/user",
                     //     });
                     // }
+                    console.log(token, "token");
                     return [2 /*return*/, res
                             .cookie("token", token, {
                             httpOnly: true,

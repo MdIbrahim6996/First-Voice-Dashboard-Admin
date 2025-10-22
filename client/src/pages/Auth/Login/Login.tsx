@@ -36,6 +36,7 @@ const Login = () => {
                 localStorage.setItem("authUser", JSON.stringify(data));
                 if (data?.user?.role === "superadmin") navigate("/superadmin");
                 if (data?.user?.role === "admin") navigate("/admin");
+                if (data?.user?.role === "accountant") navigate("/accountant");
             }
         } catch (error: unknown) {
             console.log(error);
