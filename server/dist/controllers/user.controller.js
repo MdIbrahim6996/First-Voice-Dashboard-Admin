@@ -59,7 +59,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserYearlyLeads = exports.getUserYearlyAttendance = exports.getUserInfo = exports.deleteUser = exports.updateUser = exports.getSingleUser = exports.getAllOldUser = exports.getAllUser = exports.createUser = void 0;
+exports.getUserYearlyLeadsVerified = exports.getUserYearlyLeadsClosed = exports.getUserYearlyLeads = exports.getUserYearlyAttendance = exports.getUserInfo = exports.deleteUser = exports.updateUser = exports.getSingleUser = exports.getAllOldUser = exports.getAllCloser = exports.getAllUser = exports.createUser = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var superjson_1 = __importDefault(require("superjson"));
@@ -163,8 +163,44 @@ var getAllUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.getAllUser = getAllUser;
+var getAllCloser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var name, search, users, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                name = req.query.name;
+                search = typeof name === "string" ? name.trim() : null;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, prismaClient_1.prisma.user.findMany({
+                        where: {
+                            alias: name
+                                ? {
+                                    contains: name.toUpperCase(),
+                                }
+                                : client_1.Prisma.skip,
+                            role: { in: ["closer", "verifier"] },
+                        },
+                        orderBy: { createdAt: "desc" },
+                        include: { process: { select: { name: true } } },
+                    })];
+            case 2:
+                users = _a.sent();
+                res.send(users);
+                return [3 /*break*/, 4];
+            case 3:
+                error_3 = _a.sent();
+                console.log(error_3);
+                next(error_3);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllCloser = getAllCloser;
 var getAllOldUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var users, error_3;
+    var users, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -177,9 +213,9 @@ var getAllOldUser = function (req, res, next) { return __awaiter(void 0, void 0,
                 res.send(superjson_1.default.stringify(users));
                 return [3 /*break*/, 3];
             case 2:
-                error_3 = _a.sent();
-                console.log(error_3);
-                next(error_3);
+                error_4 = _a.sent();
+                console.log(error_4);
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -208,7 +244,7 @@ var getSingleUser = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getSingleUser = getSingleUser;
 var updateUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, name, alias, email, employeeId, phone, password, block, role, process, existingUser, hashedPassword, user, error_4;
+    var id, _a, name, alias, email, employeeId, phone, password, block, role, process, existingUser, hashedPassword, user, error_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -249,9 +285,9 @@ var updateUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 res.send(user);
                 return [3 /*break*/, 6];
             case 5:
-                error_4 = _b.sent();
-                console.log(error_4);
-                next(error_4);
+                error_5 = _b.sent();
+                console.log(error_5);
+                next(error_5);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
@@ -259,7 +295,7 @@ var updateUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.updateUser = updateUser;
 var deleteUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, user, error_5;
+    var id, user, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -271,9 +307,9 @@ var deleteUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 res.send(user);
                 return [3 /*break*/, 3];
             case 2:
-                error_5 = _a.sent();
-                console.log(error_5);
-                next(error_5);
+                error_6 = _a.sent();
+                console.log(error_6);
+                next(error_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -427,7 +463,7 @@ var getPieChartInfo = function (userId_1) {
     });
 };
 var getUserInfo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, user, cacheKey, profileData, userAttendance, grouped, _a, _b, _c, _d, _e, error_6;
+    var userId, user, cacheKey, profileData, userAttendance, grouped, _a, _b, _c, _d, _e, error_7;
     var _f, _g;
     return __generator(this, function (_h) {
         switch (_h.label) {
@@ -486,9 +522,9 @@ var getUserInfo = function (req, res, next) { return __awaiter(void 0, void 0, v
                         _g)]);
                 return [3 /*break*/, 9];
             case 8:
-                error_6 = _h.sent();
-                console.log(error_6);
-                next(error_6);
+                error_7 = _h.sent();
+                console.log(error_7);
+                next(error_7);
                 return [3 /*break*/, 9];
             case 9: return [2 /*return*/];
         }
@@ -544,3 +580,63 @@ var getUserYearlyLeads = function (req, res, next) { return __awaiter(void 0, vo
     });
 }); };
 exports.getUserYearlyLeads = getUserYearlyLeads;
+var getUserYearlyLeadsClosed = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, leads;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
+                        where: { closerId: parseInt(id) },
+                        select: {
+                            status: true,
+                            leadBy: { select: { alias: true } },
+                            id: true,
+                            createdAt: true,
+                        },
+                        orderBy: { saleDate: "desc" },
+                    })];
+            case 1:
+                leads = _a.sent();
+                res.send(leads);
+                try {
+                }
+                catch (error) {
+                    console.log(error);
+                    next(error);
+                }
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getUserYearlyLeadsClosed = getUserYearlyLeadsClosed;
+var getUserYearlyLeadsVerified = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, leads;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
+                        where: { verifierId: parseInt(id) },
+                        select: {
+                            status: true,
+                            leadBy: { select: { alias: true } },
+                            id: true,
+                            createdAt: true,
+                        },
+                        orderBy: { saleDate: "desc" },
+                    })];
+            case 1:
+                leads = _a.sent();
+                res.send(leads);
+                try {
+                }
+                catch (error) {
+                    console.log(error);
+                    next(error);
+                }
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getUserYearlyLeadsVerified = getUserYearlyLeadsVerified;

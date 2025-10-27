@@ -12,6 +12,16 @@ export const getAllUser = async (name?: string) => {
         console.log(error);
     }
 };
+export const getAllCloser = async (name?: string) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `/user/closer?name=${name || ""}`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
 export const getAllOldUser = async () => {
     try {
         const { data } = await axiosInstance.get(`/user/old`);
@@ -78,6 +88,35 @@ export const getUserYearlyLeads = async (id: number) => {
     try {
         const { data } = await axiosInstance.get(
             `${SERVER_URL}/user/${id}/yearly-leads`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
+
+export const getUserYearlyLeadsClosed = async (id: number) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `${SERVER_URL}/user/${id}/yearly-leads/closed`
+        );
+        return data;
+    } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+            toast.error(error?.response?.data?.message);
+        }
+        return error;
+    }
+};
+export const getUserYearlyLeadsVerified = async (id: number) => {
+    try {
+        const { data } = await axiosInstance.get(
+            `${SERVER_URL}/user/${id}/yearly-leads/verified`
         );
         return data;
     } catch (error) {

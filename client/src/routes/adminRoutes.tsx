@@ -66,6 +66,13 @@ export const adminRoutes: RouteObject = {
             },
         },
         {
+            path: "closers",
+            async lazy() {
+                let Closer = await import("../pages/Admin/Closer/Closer");
+                return { Component: Closer.default };
+            },
+        },
+        {
             path: "*",
             element: <NotFoundPage />,
         },

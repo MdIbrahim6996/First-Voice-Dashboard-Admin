@@ -62,6 +62,12 @@ export const adminLinks = [
         link: "/admin/users",
         icon: <MdPerson className="text-xl" />,
     },
+    {
+        id: 7,
+        title: "Closers",
+        link: "/admin/closers",
+        icon: <MdPerson className="text-xl" />,
+    },
 ];
 export const superAdminLinks = [
     // {

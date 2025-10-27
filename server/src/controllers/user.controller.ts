@@ -92,6 +92,33 @@ export const getAllUser = async (
         next(error);
     }
 };
+export const getAllCloser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { name } = req.query as { name?: string };
+    const search = typeof name === "string" ? name.trim() : null;
+
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                alias: name
+                    ? {
+                          contains: name.toUpperCase(),
+                      }
+                    : Prisma.skip,
+                role: { in: ["closer", "verifier"] },
+            },
+            orderBy: { createdAt: "desc" },
+            include: { process: { select: { name: true } } },
+        });
+        res.send(users);
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
 export const getAllOldUser = async (
     req: Request,
     res: Response,
@@ -407,6 +434,54 @@ export const getUserYearlyLeads = async (
     const leads = await prisma.lead.findMany({
         where: { leadByUserId: parseInt(id) },
         include: { status: true },
+        orderBy: { saleDate: "desc" },
+    });
+    res.send(leads);
+    try {
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+export const getUserYearlyLeadsClosed = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    const leads = await prisma.lead.findMany({
+        where: { closerId: parseInt(id) },
+        select: {
+            status: true,
+            leadBy: { select: { alias: true } },
+            id: true,
+            createdAt: true,
+        },
+        orderBy: { saleDate: "desc" },
+    });
+    res.send(leads);
+    try {
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+export const getUserYearlyLeadsVerified = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { id } = req.params;
+
+    const leads = await prisma.lead.findMany({
+        where: { verifierId: parseInt(id) },
+        select: {
+            status: true,
+            leadBy: { select: { alias: true } },
+            id: true,
+            createdAt: true,
+        },
         orderBy: { saleDate: "desc" },
     });
     res.send(leads);
