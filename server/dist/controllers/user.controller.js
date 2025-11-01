@@ -328,9 +328,10 @@ var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, vo
                 nextStartDay.setUTCHours(0, 0, 0, 0);
                 currentStartMonth = new Date();
                 currentStartMonth.setDate(1);
+                currentStartMonth.setMonth(currentStartMonth.getMonth() - 1); //change it later , this line was not here.
                 currentStartMonth.setUTCHours(0, 0, 0, 0);
                 nextStartMonth = new Date();
-                nextStartMonth.setMonth(nextStartMonth.getMonth() + 1);
+                nextStartMonth.setMonth(nextStartMonth.getMonth()); //change it later ,this line was +1
                 nextStartMonth.setDate(1);
                 nextStartMonth.setUTCHours(0, 0, 0, 0);
                 return [4 /*yield*/, prismaClient_1.prisma.lead.count({

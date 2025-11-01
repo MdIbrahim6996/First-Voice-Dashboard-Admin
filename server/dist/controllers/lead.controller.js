@@ -230,11 +230,11 @@ var getAllLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.getAllLead = getAllLead;
 var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, phone, post, fromDate, toDate, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_3;
+    var _a, phone, post, fromDate, toDate, process, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_3;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate;
+                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate, process = _a.process;
                 formattedToDate = new Date(toDate);
                 toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
                 page = parseInt(req.query.page) || 1;
@@ -250,6 +250,7 @@ var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0,
                             where: {
                                 phone: phone ? phone : client_1.Prisma.skip,
                                 pin: post ? post : client_1.Prisma.skip,
+                                process: process ? process : client_1.Prisma.skip,
                                 created_at: {
                                     gte: fromDate
                                         ? new Date(fromDate)
@@ -281,11 +282,11 @@ var getAllOldLead = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getAllOldLead = getAllOldLead;
 var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, phone, post, fromDate, toDate, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_4;
+    var _a, phone, post, fromDate, toDate, process, formattedToDate, toDatePlusOne, page, limit, skip, _b, leads, total, error_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate;
+                _a = req.query, phone = _a.phone, post = _a.post, fromDate = _a.fromDate, toDate = _a.toDate, process = _a.process;
                 formattedToDate = new Date(toDate);
                 toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
                 page = parseInt(req.query.page) || 1;
@@ -301,6 +302,7 @@ var getAllOldLeadForms = function (req, res, next) { return __awaiter(void 0, vo
                             where: {
                                 phone: phone ? phone : client_1.Prisma.skip,
                                 pincode: post ? post : client_1.Prisma.skip,
+                                process: process ? process : client_1.Prisma.skip,
                                 created_at: {
                                     gte: fromDate
                                         ? new Date(fromDate)

@@ -10,6 +10,32 @@ import { BsCalendar2EventFill } from "react-icons/bs";
 export const PUSHER_SECRET = "3598d69c8453a73ad670";
 export const PUSHER_CLUSTER = "ap2";
 
+export const oldLeadsProcess = [
+    { name: "COMPREHENSIVE CARE (WG)" },
+    { name: "MEDI ALARM 247" },
+    { name: "NO 1 WHITE GOODS" },
+    { name: "CLEAR WATER" },
+    { name: "ARA ENERGY BOILERS" },
+    { name: "PROTECT ALERT" },
+    { name: "DRAINAGE PROTECTION LINE" },
+    { name: "ARA WG" },
+];
+export const oldLeadFormProcess = [
+    { name: "DEFAULT" },
+    // { name: null },
+    { name: "LEAD GEN" },
+    { name: "WHITE GOODS 1" },
+    { name: "BOILER2" },
+    { name: "BOILER" },
+    { name: "MEDICAL SOS" },
+    { name: "WHITE GOODS 2" },
+    { name: "BOILER1" },
+    { name: "MEDICAL SOS 2" },
+    { name: "MEDICAL SOS 1" },
+    { name: "BOILER3" },
+    { name: "MEDICAL SOS 3" },
+];
+
 export const monthNames = [
     "January",
     "February",

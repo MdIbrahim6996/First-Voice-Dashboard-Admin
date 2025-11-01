@@ -22,7 +22,6 @@ const LeadDetailModal = ({
         queryFn: () => getAppliance(details?.id),
     });
 
-    console.log(details);
 
     return (
         <>

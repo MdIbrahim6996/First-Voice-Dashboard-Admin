@@ -6,6 +6,7 @@ import compression from "compression";
 import path from "path";
 import router from "./routes";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware";
+import { prisma } from "./lib/prismaClient";
 
 const app = express();
 

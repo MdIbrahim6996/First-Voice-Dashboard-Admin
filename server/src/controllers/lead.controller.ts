@@ -281,7 +281,7 @@ export const getAllOldLead = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { phone, post, fromDate, toDate } = req.query;
+    const { phone, post, fromDate, toDate, process } = req.query;
     let formattedToDate = new Date(toDate as string);
     let toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
 
@@ -298,6 +298,7 @@ export const getAllOldLead = async (
                 where: {
                     phone: phone ? (phone as string) : Prisma.skip,
                     pin: post ? (post as string) : Prisma.skip,
+                    process: process ? (process as string) : Prisma.skip,
                     created_at: {
                         gte: fromDate
                             ? new Date(fromDate as string)
@@ -325,7 +326,7 @@ export const getAllOldLeadForms = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { phone, post, fromDate, toDate } = req.query;
+    const { phone, post, fromDate, toDate, process } = req.query;
     let formattedToDate = new Date(toDate as string);
     let toDatePlusOne = formattedToDate.setDate(formattedToDate.getDate() + 1);
 
@@ -341,6 +342,7 @@ export const getAllOldLeadForms = async (
                 where: {
                     phone: phone ? (phone as string) : Prisma.skip,
                     pincode: post ? (post as string) : Prisma.skip,
+                    process: process ? (process as string) : Prisma.skip,
                     created_at: {
                         gte: fromDate
                             ? new Date(fromDate as string)

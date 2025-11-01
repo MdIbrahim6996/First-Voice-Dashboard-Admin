@@ -221,10 +221,12 @@ const getProfileCardInfo = async (userId: number) => {
 
     const currentStartMonth = new Date();
     currentStartMonth.setDate(1);
+    currentStartMonth.setMonth(currentStartMonth.getMonth() - 1); //change it later , this line was not here.
+
     currentStartMonth.setUTCHours(0, 0, 0, 0);
 
     const nextStartMonth = new Date();
-    nextStartMonth.setMonth(nextStartMonth.getMonth() + 1);
+    nextStartMonth.setMonth(nextStartMonth.getMonth()); //change it later ,this line was +1
     nextStartMonth.setDate(1);
     nextStartMonth.setUTCHours(0, 0, 0, 0);
 

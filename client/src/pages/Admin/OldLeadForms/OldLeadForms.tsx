@@ -6,7 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import Loader from "../../../components/Loader/Loader";
 import EmptyState from "../../../components/EmptyState/EmptyState";
 import { CSVLink } from "react-csv";
-import { FaFileCsv } from "react-icons/fa";
+import { FaEye, FaFileCsv } from "react-icons/fa";
+import { oldLeadFormProcess } from "../../../constants/appConstant";
+import OldLeadFormDetailModal from "../../../components/Modal/OldLeadFormDetailModal";
 
 const OldLeadForms = () => {
     const [phone, setPhone] = useState("");
@@ -14,6 +16,13 @@ const OldLeadForms = () => {
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [limit, setLimit] = useState(30);
+    const [process, setProcess] = useState("");
+    const [detail, setDetail] = useState({});
+    const [show, setShow] = useState({
+        edit: false,
+        delete: false,
+        view: false,
+    });
 
     const topScrollRef = useRef<HTMLDivElement | null>(null);
     const bottomScrollRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +51,15 @@ const OldLeadForms = () => {
     const { data, refetch, isLoading, isFetching } = useQuery({
         queryKey: ["old-leadforms", page],
         queryFn: () =>
-            getAllOldLeadForms(phone, post, fromDate, toDate, page, limit),
+            getAllOldLeadForms(
+                phone,
+                post,
+                fromDate,
+                toDate,
+                page,
+                limit,
+                process
+            ),
         placeholderData: true,
     });
 
@@ -58,6 +75,7 @@ const OldLeadForms = () => {
         setPost("");
         setFromDate("");
         setToDate("");
+        setProcess("");
         refetch();
     };
 
@@ -72,7 +90,7 @@ const OldLeadForms = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0 }}
                     >
-                        <div className="grid grid-cols-5 gap-x-3 gap-y-3">
+                        <div className="grid grid-cols-3 gap-x-3 gap-y-3">
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="phone">Phone</label>
                                 <input
@@ -90,26 +108,6 @@ const OldLeadForms = () => {
                                         }
                                     }}
                                     id="phone"
-                                    className="border border-gray-400 px-3 py-1 rounded-md outline-none"
-                                />
-                            </div>
-                            <div className="flex flex-col space-y-1">
-                                <label htmlFor="post">Post Code</label>
-                                <input
-                                    autoComplete="off"
-                                    type="text"
-                                    name="post"
-                                    placeholder="POST CODE"
-                                    value={post}
-                                    onChange={(e) => setPost(e?.target?.value)}
-                                    onKeyDown={(
-                                        e: React.KeyboardEvent<HTMLInputElement>
-                                    ) => {
-                                        if (e.key === "Enter") {
-                                            refetch();
-                                        }
-                                    }}
-                                    id="post"
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
                             </div>
@@ -136,6 +134,26 @@ const OldLeadForms = () => {
                                     onChange={(e) => setToDate(e.target.value)}
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
+                            </div>{" "}
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="post">Post Code</label>
+                                <input
+                                    autoComplete="off"
+                                    type="text"
+                                    name="post"
+                                    placeholder="POST CODE"
+                                    value={post}
+                                    onChange={(e) => setPost(e?.target?.value)}
+                                    onKeyDown={(
+                                        e: React.KeyboardEvent<HTMLInputElement>
+                                    ) => {
+                                        if (e.key === "Enter") {
+                                            refetch();
+                                        }
+                                    }}
+                                    id="post"
+                                    className="border border-gray-400 px-3 py-1 rounded-md outline-none"
+                                />
                             </div>
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="limit">Limit Per Page</label>
@@ -150,6 +168,30 @@ const OldLeadForms = () => {
                                     {limitArray?.map((item: any) => (
                                         <option key={item} value={item}>
                                             {item}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="process">Process</label>
+                                <select
+                                    name="process"
+                                    onChange={(e: any) =>
+                                        setProcess(e?.target?.value)
+                                    }
+                                    value={process}
+                                    id="process"
+                                    className="border outline-none border-gray-400 px-3 py-1 rounded-md"
+                                >
+                                    <option value="" selected disabled>
+                                        Select A Process
+                                    </option>
+                                    {oldLeadFormProcess?.map((item: any) => (
+                                        <option
+                                            key={item?.name}
+                                            value={item?.name}
+                                        >
+                                            {item?.name}
                                         </option>
                                     ))}
                                 </select>
@@ -246,6 +288,12 @@ const OldLeadForms = () => {
                                                 scope="col"
                                                 className="whitespace-nowrap px-6 py-3"
                                             >
+                                                actions
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="whitespace-nowrap px-6 py-3"
+                                            >
                                                 date
                                             </th>
                                             <th
@@ -254,7 +302,6 @@ const OldLeadForms = () => {
                                             >
                                                 salutation
                                             </th>
-
                                             <th
                                                 scope="col"
                                                 className="whitespace-nowrap px-6 py-3"
@@ -300,7 +347,21 @@ const OldLeadForms = () => {
                                                 >
                                                     {(page - 1) * limit + i + 1}
                                                 </th>
-
+                                                <td className="flex justify-center py-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setDetail(item);
+                                                            setShow({
+                                                                edit: false,
+                                                                delete: false,
+                                                                view: true,
+                                                            });
+                                                        }}
+                                                        className="font-medium text-white bg-blue-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1 cursor-pointer"
+                                                    >
+                                                        <FaEye />
+                                                    </button>
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap uppercase">
                                                     {new Date(
                                                         item?.sale_date
@@ -429,6 +490,14 @@ const OldLeadForms = () => {
                     )}
                 </div>
             </div>
+            {show.view && (
+                <OldLeadFormDetailModal
+                    handleClose={() =>
+                        setShow({ edit: false, view: false, delete: false })
+                    }
+                    details={detail}
+                />
+            )}
         </>
     );
 };
