@@ -164,6 +164,7 @@ const EditLeadModal = ({
     });
 
     const onSubmit: SubmitHandler<UpdateLeadsFormInput> = (data) => {
+        console.log(data);
         editMutation.mutate({
             ...data,
             id: item?.id,

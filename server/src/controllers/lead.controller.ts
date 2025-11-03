@@ -489,7 +489,7 @@ export const updateLead = async (
         appliances,
     } = req.body;
     // console.log(phone);
-    // console.log(req.body);
+    console.log(req.body);
 
     try {
         let initialStatus = req?.body?.initialStatus as string;
@@ -500,7 +500,6 @@ export const updateLead = async (
             age: +item?.age,
             leadId: +id,
         }));
-        // console.log(req.body);
 
         if (appliances && appliances.length > 0) {
             await prisma.appliance.createMany({ data: appliancesArray });
@@ -554,7 +553,13 @@ export const updateLead = async (
         console.log("in", initialStatus);
         console.log("final", finalStatus);
         let statusChangeReason;
-        if (reason || finalStatus !== initialStatus) {
+        if (
+            reason ||
+            (finalStatus !== undefined &&
+                finalStatus !== null &&
+                finalStatus !== "" &&
+                finalStatus !== initialStatus)
+        ) {
             console.log("inside");
 
             statusChangeReason = await prisma.statusChangeReason.create({

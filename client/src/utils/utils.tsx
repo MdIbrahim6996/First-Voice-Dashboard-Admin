@@ -33,3 +33,19 @@ export const formatNumber = (number: number) =>
 export const filterStatus = (status: any) => {
     return status?.filter((item: any) => item?.name === "paid" || "refund");
 };
+
+export const formatDate = (date: Date) => {
+    const dt = new Date(date);
+
+    // Example: formatted for Asia/Kolkata
+    return dt.toLocaleString("en-GB", {
+        timeZone: "Asia/Kolkata", // convert to India time
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+    });
+};

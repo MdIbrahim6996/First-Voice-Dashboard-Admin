@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import type { LeadsFormInput } from "../../types/form.types";
 import { useQuery } from "@tanstack/react-query";
 import { getAppliance } from "../../api/appliance";
+import { formatDate } from "../../utils/utils";
 
 const LeadDetailModal = ({
     details,
@@ -82,6 +83,12 @@ const LeadDetailModal = ({
                                                     >
                                                         Reason
                                                     </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="px-6 py-3"
+                                                    >
+                                                        Updated At
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             {details?.StatusChangeReason
@@ -90,7 +97,7 @@ const LeadDetailModal = ({
                                                     (item: any, i: number) => (
                                                         <tr
                                                             key={item?.id}
-                                                            className={` capitalize text-center border-b :border-gray-700 border-gray-200`}
+                                                            className={` capitalize font-semibold text-slate-700 text-center border-b :border-gray-700 border-gray-200`}
                                                         >
                                                             <td className="px-6 py-4 whitespace-nowrap uppercase">
                                                                 {i + 1}
@@ -105,6 +112,9 @@ const LeadDetailModal = ({
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap uppercase">
                                                                 {item?.reason}
+                                                            </td>
+                                                            <td className="px-6 py-4 whitespace-nowrap uppercase">
+                                                                {formatDate(item?.createdAt)}
                                                             </td>
                                                         </tr>
                                                     )

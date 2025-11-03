@@ -443,6 +443,8 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
             case 0:
                 id = req.params.id;
                 _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, phone = _a.phone, fee = _a.fee, currency = _a.currency, bankName = _a.bankName, accountName = _a.accountName, sort = _a.sort, dateOfBirth = _a.dateOfBirth, closer = _a.closer, verifier = _a.verifier, status = _a.status, reason = _a.reason, comment = _a.comment, password = _a.password, poa = _a.poa, process = _a.process, plan = _a.plan, paymentMethod = _a.paymentMethod, bank = _a.bank, card = _a.card, appliances = _a.appliances;
+                // console.log(phone);
+                console.log(req.body);
                 _d.label = 1;
             case 1:
                 _d.trys.push([1, 9, , 10]);
@@ -504,7 +506,11 @@ var updateLead = function (req, res, next) { return __awaiter(void 0, void 0, vo
                 console.log("in", initialStatus);
                 console.log("final", finalStatus);
                 statusChangeReason = void 0;
-                if (!(reason || finalStatus !== initialStatus)) return [3 /*break*/, 6];
+                if (!(reason ||
+                    (finalStatus !== undefined &&
+                        finalStatus !== null &&
+                        finalStatus !== "" &&
+                        finalStatus !== initialStatus))) return [3 /*break*/, 6];
                 console.log("inside");
                 return [4 /*yield*/, prismaClient_1.prisma.statusChangeReason.create({
                         data: {

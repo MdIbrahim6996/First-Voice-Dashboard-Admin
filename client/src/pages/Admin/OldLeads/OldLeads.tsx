@@ -108,7 +108,6 @@ const OldLeads = () => {
         //
         { label: "COMMENT", key: "comments" },
     ];
-
     const limitArray = [30, 50, 100, 500, 1000];
 
     return (
@@ -164,7 +163,7 @@ const OldLeads = () => {
                                     onChange={(e) => setToDate(e.target.value)}
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
-                            </div>{" "}
+                            </div>
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="post">Post Code</label>
                                 <input
