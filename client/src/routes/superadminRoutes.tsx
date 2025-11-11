@@ -43,7 +43,7 @@ export const superadminRoutes: RouteObject = {
         {
             path: "old-leads",
             async lazy() {
-                let OldLeads = await import("../pages/OldLeads/OldLeads");
+                let OldLeads = await import("../pages/Admin/OldLeads/OldLeads");
                 return { Component: OldLeads.default };
             },
         },
@@ -51,7 +51,7 @@ export const superadminRoutes: RouteObject = {
             path: "old-leadforms",
             async lazy() {
                 let OldLeadForms = await import(
-                    "../pages/OldLeadForms/OldLeadForms"
+                    "../pages/Admin/OldLeadForms/OldLeadForms"
                 );
                 return { Component: OldLeadForms.default };
             },
