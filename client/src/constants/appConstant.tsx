@@ -207,4 +207,10 @@ export const accountantLinks = [
         link: "/accountant/closers",
         icon: <MdPerson className="text-xl" />,
     },
+    {
+        id: 3,
+        title: "Monthly Attendance",
+        link: "/accountant/monthly-attendance",
+        icon: <BsCalendar2EventFill className="text-xl" />,
+    },
 ];

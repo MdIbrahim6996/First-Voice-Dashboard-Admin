@@ -27,6 +27,15 @@ export const accountantRoutes: RouteObject = {
             },
         },
         {
+            path: "monthly-attendance",
+            async lazy() {
+                let MonthlyAttendance = await import(
+                    "../pages/MonthlyAttendance/MonthlyAttendance"
+                );
+                return { Component: MonthlyAttendance.default };
+            },
+        },
+        {
             path: "*",
             element: <NotFoundPage />,
         },

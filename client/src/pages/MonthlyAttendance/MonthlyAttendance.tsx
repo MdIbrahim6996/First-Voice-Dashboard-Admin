@@ -9,6 +9,7 @@ const MonthlyAttendance = () => {
     const date = new Date();
     const [year, setYear] = useState(date.getFullYear());
     const [month, setMonth] = useState(date.getMonth());
+    // @ts-ignore
     const [name, setName] = useState<string | undefined>("");
 
     const { data: monthlyAttendance, refetch } = useQuery({
@@ -73,7 +74,7 @@ const MonthlyAttendance = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="flex flex-col space-y-1">
+                        {/* <div className="flex flex-col space-y-1">
                             <label htmlFor="name">Name</label>
                             <input
                                 type="text"
@@ -84,7 +85,7 @@ const MonthlyAttendance = () => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mb-10 mt-3 flex items-center gap-2 text-sm">
                         <button
@@ -162,7 +163,7 @@ const MonthlyAttendance = () => {
                                         {item?.userId}
                                     </th>
                                     <td className="px-6 py-4">
-                                        {getUserDetails(item?.userId)?.name}
+                                        {getUserDetails(item?.userId)?.alias}
                                     </td>
                                     <td className="px-6 py-4">2025</td>
                                     <td className="px-6 py-4">
