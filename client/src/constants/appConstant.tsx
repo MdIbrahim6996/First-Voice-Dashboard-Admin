@@ -201,4 +201,10 @@ export const accountantLinks = [
         link: "/accountant/users",
         icon: <MdPerson className="text-xl" />,
     },
+    {
+        id: 2,
+        title: "Closers",
+        link: "/accountant/closers",
+        icon: <MdPerson className="text-xl" />,
+    },
 ];

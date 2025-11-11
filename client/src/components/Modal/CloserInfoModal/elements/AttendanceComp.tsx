@@ -57,7 +57,7 @@ const AttendanceComp = ({ userId }: { userId: number }) => {
             <div className="p-5 max-h-screen">
                 {data && (
                     <Scheduler
-                        height={400}
+                        height={500}
                         dialogMaxWidth={"xs"}
                         view="month"
                         month={{

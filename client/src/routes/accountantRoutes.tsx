@@ -20,6 +20,13 @@ export const accountantRoutes: RouteObject = {
             },
         },
         {
+            path: "closers",
+            async lazy() {
+                let Closer = await import("../pages/Accountant/Closer/Closer");
+                return { Component: Closer.default };
+            },
+        },
+        {
             path: "*",
             element: <NotFoundPage />,
         },
