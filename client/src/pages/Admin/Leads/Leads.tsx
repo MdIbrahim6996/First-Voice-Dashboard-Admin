@@ -103,10 +103,10 @@ const Leads = () => {
 
     const leads = data?.leads;
 
-    const pagesArray = Array.from(
-        { length: data?.totalPages },
-        (_, i) => i + 1
-    );
+    // const pagesArray = Array.from(
+    //     { length: data?.totalPages },
+    //     (_, i) => i + 1
+    // );
 
     const { mutate } = useMutation({
         mutationFn: (id: number) => deleteLead(id),
@@ -834,7 +834,7 @@ const Leads = () => {
                                 Prev
                             </button>
 
-                            {pagesArray?.map((p) => (
+                            {/* {pagesArray?.map((p) => (
                                 <button
                                     key={p}
                                     onClick={() => setPage(p)}
@@ -846,7 +846,61 @@ const Leads = () => {
                                 >
                                     {p}
                                 </button>
-                            ))}
+                            ))} */}
+                            {/* Pages */}
+                            {(() => {
+                                const totalPages = data?.totalPages || 0;
+                                const maxVisible = 5; // number of pages to show around the current page
+                                let pages: (number | string)[] = [];
+
+                                if (totalPages <= 7) {
+                                    // If few pages, show all
+                                    pages = Array.from(
+                                        { length: totalPages },
+                                        (_, i) => i + 1
+                                    );
+                                } else {
+                                    // Always show first + last page
+                                    pages.push(1);
+
+                                    if (page > maxVisible) pages.push("...");
+
+                                    const start = Math.max(2, page - 2);
+                                    const end = Math.min(
+                                        totalPages - 1,
+                                        page + 2
+                                    );
+
+                                    for (let i = start; i <= end; i++) {
+                                        pages.push(i);
+                                    }
+
+                                    if (page < totalPages - (maxVisible - 1))
+                                        pages.push("...");
+
+                                    pages.push(totalPages);
+                                }
+
+                                return pages.map((p, idx) =>
+                                    p === "..." ? (
+                                        <span key={idx} className="px-3 py-1">
+                                            ...
+                                        </span>
+                                    ) : (
+                                        <button
+                                            key={p}
+                                            onClick={() => setPage(p as number)}
+                                            className={`text-xs font-semibold px-6 py-1 rounded-md capitalize cursor-pointer ${
+                                                p === page
+                                                    ? "bg-sky-500 text-white"
+                                                    : "bg-white text-black border border-slate-400"
+                                            }`}
+                                        >
+                                            {p}
+                                        </button>
+                                    )
+                                );
+                            })()}
 
                             <button
                                 disabled={page === data?.totalPages}
