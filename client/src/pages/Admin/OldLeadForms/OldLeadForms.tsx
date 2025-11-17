@@ -7,7 +7,7 @@ import Loader from "../../../components/Loader/Loader";
 import EmptyState from "../../../components/EmptyState/EmptyState";
 import { CSVLink } from "react-csv";
 import { FaEye, FaFileCsv } from "react-icons/fa";
-import { oldLeadFormProcess } from "../../../constants/appConstant";
+import { limitArray, oldLeadFormProcess } from "../../../constants/appConstant";
 import OldLeadFormDetailModal from "../../../components/Modal/OldLeadFormDetailModal";
 
 const OldLeadForms = () => {
@@ -78,8 +78,6 @@ const OldLeadForms = () => {
         setProcess("");
         refetch();
     };
-
-    const limitArray = [30, 50, 100, 500, 1000];
 
     return (
         <>

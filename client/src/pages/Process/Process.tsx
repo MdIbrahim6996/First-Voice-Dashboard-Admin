@@ -61,17 +61,6 @@ const Process = () => {
                                 <MdAdd className="text-xl" /> Add Process
                             </button>
                         </motion.div>
-
-                        <motion.p
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.25 }}
-                            className="mt-1 text-sm font-normal text-gray-700 w-[50%]"
-                        >
-                            Browse a list of Flowbite products designed to help
-                            you work and play, stay organized, get answers, keep
-                            in touch, grow your business, and more.
-                        </motion.p>
                     </div>
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}

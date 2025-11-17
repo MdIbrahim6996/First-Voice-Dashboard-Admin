@@ -14,6 +14,7 @@ import LeadDetailModal from "../../../components/Modal/LeadDetailModal";
 import Loader from "../../../components/Loader/Loader";
 import EmptyState from "../../../components/EmptyState/EmptyState";
 import { getAppliancePerPage } from "../../../api/appliance";
+import { limitArray } from "../../../constants/appConstant";
 
 const Leads = () => {
     const [phone, setPhone] = useState("");
@@ -58,7 +59,7 @@ const Leads = () => {
     });
 
     const [page, setPage] = useState(1);
-    const limit = 30;
+    const [limit, setLimit] = useState(30);
 
     const queryClient = useQueryClient();
 
@@ -500,6 +501,23 @@ const Leads = () => {
                                     onChange={(e) => setToDate(e.target.value)}
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
+                            </div>{" "}
+                            <div className="flex flex-col space-y-1">
+                                <label htmlFor="limit">Limit Per Page</label>
+                                <select
+                                    name="limit"
+                                    onChange={(e: any) =>
+                                        setLimit(e?.target?.value)
+                                    }
+                                    id="limit"
+                                    className="border outline-none border-gray-400 px-3 py-1 rounded-md"
+                                >
+                                    {limitArray?.map((item: any) => (
+                                        <option key={item} value={item}>
+                                            {item}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className="mb-10 mt-3 flex items-center gap-2 text-sm">

@@ -10,6 +10,8 @@ import { BsCalendar2EventFill } from "react-icons/bs";
 export const PUSHER_SECRET = "3598d69c8453a73ad670";
 export const PUSHER_CLUSTER = "ap2";
 
+export const limitArray = [30, 50, 100, 500, 1000, 5000, 10000];
+
 export const oldLeadsProcess = [
     { name: "COMPREHENSIVE CARE (WG)" },
     { name: "MEDI ALARM 247" },

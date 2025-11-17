@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { useState } from "react";
-import { MdDelete, MdAdd, MdEdit } from "react-icons/md";
+import { MdAdd, MdEdit } from "react-icons/md";
 import { deleteStatus, getAllStatus } from "../../api/status";
 import CreateStatus from "../../components/Modal/CreateStatus";
 import DeleteModal from "../../components/Modal/DeleteModal";
@@ -65,17 +65,6 @@ const Status = () => {
                                 <MdAdd className="text-xl" /> Add Status
                             </button>
                         </motion.div>
-
-                        <motion.p
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.25 }}
-                            className="mt-1 text-sm font-normal text-gray-700 w-[50%]"
-                        >
-                            Browse a list of Flowbite products designed to help
-                            you work and play, stay organized, get answers, keep
-                            in touch, grow your business, and more.
-                        </motion.p>
                     </div>
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
@@ -127,7 +116,7 @@ const Status = () => {
                                             >
                                                 <MdEdit />
                                             </button>
-                                            <button
+                                            {/* <button
                                                 onClick={() => {
                                                     setId(item.id);
                                                     setShow({
@@ -139,7 +128,7 @@ const Status = () => {
                                                 className="font-medium text-white bg-red-500 rounded-md w-fit px-2 py-1 text-sm flex items-center gap-1"
                                             >
                                                 <MdDelete />
-                                            </button>
+                                            </button> */}
                                         </td>
                                     </tr>
                                 ))}

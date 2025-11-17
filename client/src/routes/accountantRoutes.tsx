@@ -11,7 +11,6 @@ export const accountantRoutes: RouteObject = {
             path: "",
             element: <Greeting />,
         },
-
         {
             path: "users",
             async lazy() {

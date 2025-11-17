@@ -8,7 +8,7 @@ import EmptyState from "../../../components/EmptyState/EmptyState";
 import { CSVLink } from "react-csv";
 import { FaEye, FaFileCsv } from "react-icons/fa";
 import OldLeadDetailModal from "../../../components/Modal/OldLeadDetailModal";
-import { oldLeadsProcess } from "../../../constants/appConstant";
+import { limitArray, oldLeadsProcess } from "../../../constants/appConstant";
 
 const OldLeads = () => {
     const [phone, setPhone] = useState("");
@@ -108,7 +108,6 @@ const OldLeads = () => {
         //
         { label: "COMMENT", key: "comments" },
     ];
-    const limitArray = [30, 50, 100, 500, 1000];
 
     return (
         <>
