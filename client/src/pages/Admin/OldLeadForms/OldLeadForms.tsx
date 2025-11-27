@@ -132,7 +132,7 @@ const OldLeadForms = () => {
                                     onChange={(e) => setToDate(e.target.value)}
                                     className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                                 />
-                            </div>{" "}
+                            </div>
                             <div className="flex flex-col space-y-1">
                                 <label htmlFor="post">Post Code</label>
                                 <input
