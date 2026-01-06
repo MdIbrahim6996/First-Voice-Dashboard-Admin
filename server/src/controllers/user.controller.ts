@@ -7,6 +7,7 @@ import { returnRandomQuotes } from "../utils/appConstants";
 import { graphData } from "../utils/arrayGrouping";
 import { groupBy } from "lodash";
 import { cache } from "../lib/cache";
+import { getMonthStartAndEnd } from "../utils/date";
 
 export const createUser = async (
     req: Request,
@@ -211,7 +212,11 @@ export const deleteUser = async (
     }
 };
 
-const getProfileCardInfo = async (userId: number) => {
+const getProfileCardInfo = async (
+    userId: number,
+    month: number,
+    year: number
+) => {
     const currentStartDay = new Date();
     currentStartDay.setUTCHours(0, 0, 0, 0);
 
@@ -230,6 +235,9 @@ const getProfileCardInfo = async (userId: number) => {
     nextStartMonth.setDate(1);
     nextStartMonth.setUTCHours(0, 0, 0, 0);
 
+    const startDate = getMonthStartAndEnd(Number(month), Number(year)).start;
+    const endDate = getMonthStartAndEnd(Number(month), Number(year)).nextStart;
+
     const todayLead = await prisma.lead.count({
         where: {
             leadByUserId: userId,
@@ -239,24 +247,25 @@ const getProfileCardInfo = async (userId: number) => {
     const totalLead = await prisma.lead.count({
         where: {
             leadByUserId: userId,
-            saleDate: { gte: currentStartMonth, lte: nextStartMonth },
+            saleDate: { gte: new Date(startDate), lte: new Date(endDate) },
         },
     });
     const totalSuccessLead = await prisma.lead.count({
         where: {
             leadByUserId: userId,
             status: { name: "success" },
-            saleDate: { gte: currentStartMonth, lte: nextStartMonth },
+            saleDate: { gte: new Date(startDate), lte: new Date(endDate) },
         },
     });
     const totalAttendance = await prisma.attendance.count({
         where: {
             userId,
-            dateTime: { gte: currentStartMonth, lte: nextStartMonth },
+            dateTime: { gte: new Date(startDate), lte: new Date(endDate) },
         },
     });
     let spd;
     if (totalAttendance > 0) spd = totalSuccessLead / totalAttendance;
+
     return {
         todayLead: todayLead > 9 ? todayLead : "0" + todayLead,
         totalSuccessLead:
@@ -268,7 +277,12 @@ const getProfileCardInfo = async (userId: number) => {
     };
 };
 
-const getPieChartInfo = async (userId: number, time = "thisMonth") => {
+const getPieChartInfo = async (
+    userId: number,
+    time = "thisMonth",
+    month: number,
+    year: number
+) => {
     const filterDate: {
         startDate: Date;
         endDate: Date;
@@ -277,6 +291,9 @@ const getPieChartInfo = async (userId: number, time = "thisMonth") => {
         endDate: new Date(),
     };
     const currentDate = new Date();
+
+    const startDate = getMonthStartAndEnd(Number(month), Number(year)).start;
+    const endDate = getMonthStartAndEnd(Number(month), Number(year)).nextStart;
 
     if (time === "today") {
         const startDay = currentDate.setUTCHours(0, 0, 0, 0);
@@ -328,8 +345,8 @@ const getPieChartInfo = async (userId: number, time = "thisMonth") => {
                 leadByUserId: userId,
                 statusId: item?.id,
                 saleDate: {
-                    gte: filterDate.startDate,
-                    lte: filterDate.endDate,
+                    gte: startDate,
+                    lte: endDate,
                 },
             },
             _count: { _all: true },
@@ -356,6 +373,7 @@ export const getUserInfo = async (
     next: NextFunction
 ) => {
     const { id: userId } = req.params;
+    const { year, month } = req.query;
 
     try {
         const user = await prisma.user.findFirst({
@@ -366,15 +384,15 @@ export const getUserInfo = async (
 
         const cacheKey = `userprofile_${userId}`;
 
-        if (cache.has(cacheKey)) {
-            const profileData: any = cache.get(cacheKey);
+        // if (cache.has(cacheKey)) {
+        //     const profileData: any = cache.get(cacheKey);
 
-            return res.send({
-                currentPath: "/user/profile",
-                ...profileData,
-                quote: returnRandomQuotes(),
-            });
-        }
+        //     return res.send({
+        //         currentPath: "/user/profile",
+        //         ...profileData,
+        //         quote: returnRandomQuotes(),
+        //     });
+        // }
 
         const userAttendance = await prisma.attendance.findMany({
             where: { userId: parseInt(userId as string) },
@@ -383,23 +401,35 @@ export const getUserInfo = async (
         const grouped = groupBy(userAttendance, (record) =>
             record.dateTime.toISOString().slice(5, 7)
         );
-        cache.set(
-            cacheKey,
-            {
-                data: grouped,
-                graphData: graphData(grouped),
-                cardInfo: await getProfileCardInfo(parseInt(userId as string)),
-                pieChart: await getPieChartInfo(parseInt(userId as string)),
-            },
-            1000 * 60 * 60
-        );
+        // cache.set(
+        //     cacheKey,
+        //     {
+        //         data: grouped,
+        //         graphData: graphData(grouped),
+        //         cardInfo: await getProfileCardInfo(
+        //             parseInt(userId as string),
+        //             Number(month),
+        //             Number(year)
+        //         ),
+        //         pieChart: await getPieChartInfo(parseInt(userId as string)),
+        //     },
+        //     1000 * 60 * 60
+        // );
 
         res.send({
-            currentPath: "/user/profile",
             data: grouped,
             graphData: graphData(grouped),
-            cardInfo: await getProfileCardInfo(parseInt(userId as string)),
-            pieChart: await getPieChartInfo(parseInt(userId as string)),
+            cardInfo: await getProfileCardInfo(
+                parseInt(userId as string),
+                Number(month),
+                Number(year)
+            ),
+            pieChart: await getPieChartInfo(
+                parseInt(userId as string),
+                "thisMonth",
+                Number(month),
+                Number(year)
+            ),
             quote: returnRandomQuotes(),
         });
     } catch (error) {

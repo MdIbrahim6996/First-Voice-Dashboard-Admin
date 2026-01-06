@@ -74,18 +74,18 @@ const MonthlyAttendance = () => {
                                 ))}
                             </select>
                         </div>
-                        {/* <div className="flex flex-col space-y-1">
-                            <label htmlFor="name">Name</label>
+                        <div className="flex flex-col space-y-1">
+                            <label htmlFor="alias">Alias</label>
                             <input
                                 type="text"
-                                name="name"
-                                id="name"
-                                placeholder="Name"
+                                name="alias"
+                                id="alias"
+                                placeholder="alias"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="border border-gray-400 px-3 py-1 rounded-md outline-none"
                             />
-                        </div> */}
+                        </div>
                     </div>
                     <div className="mb-10 mt-3 flex items-center gap-2 text-sm">
                         <button
@@ -121,7 +121,7 @@ const MonthlyAttendance = () => {
                         transition={{ duration: 0.5 }}
                         className="text-3xl font-semibold uppercase origin-center w-fit"
                     >
-                        My Workspaces - monthly attendances
+                        monthly attendances
                     </motion.p>
                 </div>
                 <motion.div
@@ -134,7 +134,7 @@ const MonthlyAttendance = () => {
                         <thead className="text-center text-gray-700 uppercase bg-gray-200">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
-                                    Employee Id
+                                    Sr. No.
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Name
@@ -151,50 +151,55 @@ const MonthlyAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {monthlyAttendance?.attendance?.map((item: any) => (
-                                <tr
-                                    key={item?.userId}
-                                    className="capitalize text-center odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700 border-gray-200"
-                                >
-                                    <th
-                                        scope="row"
-                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                            {monthlyAttendance?.attendance?.map(
+                                (item: any, i: number) => (
+                                    <tr
+                                        key={item?.userId}
+                                        className="capitalize text-center odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700 border-gray-200"
                                     >
-                                        {item?.userId}
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        {getUserDetails(item?.userId)?.alias}
-                                    </td>
-                                    <td className="px-6 py-4">2025</td>
-                                    <td className="px-6 py-4">
-                                        {monthNames[month]}
-                                    </td>
-                                    <td className="px-6 py-4 flex items-center flex-col space-y-1">
-                                        <p className="bg-blue-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
-                                            <MdCoPresent className="text-lg" />
-                                            Total :{item._count?._all}
-                                        </p>
-                                        <p className="bg-red-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
-                                            <MdAssignmentLate className="text-lg" />
-                                            Late :
+                                        <th
+                                            scope="row"
+                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                                        >
+                                            {i + 1}
+                                        </th>
+                                        <td className="px-6 py-4">
                                             {
-                                                getUserisLateCountDetails(
-                                                    item?.userId
-                                                )?._count?._all
+                                                getUserDetails(item?.userId)
+                                                    ?.alias
                                             }
-                                        </p>
-                                        <p className="bg-green-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
-                                            <MdTimer className="text-lg" />
-                                            OnTime :
-                                            {
-                                                getUserOnTimeCountDetails(
-                                                    item?.userId
-                                                )?._count?._all
-                                            }
-                                        </p>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="px-6 py-4">2025</td>
+                                        <td className="px-6 py-4">
+                                            {monthNames[month]}
+                                        </td>
+                                        <td className="px-6 py-4 flex items-center flex-col space-y-1">
+                                            <p className="bg-blue-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
+                                                <MdCoPresent className="text-lg" />
+                                                Total :{item._count?._all}
+                                            </p>
+                                            <p className="bg-red-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
+                                                <MdAssignmentLate className="text-lg" />
+                                                Late :
+                                                {
+                                                    getUserisLateCountDetails(
+                                                        item?.userId
+                                                    )?._count?._all
+                                                }
+                                            </p>
+                                            <p className="bg-green-500 flex items-center gap-x-2 text-white px-5 py-0.5 rounded w-fit">
+                                                <MdTimer className="text-lg" />
+                                                OnTime :
+                                                {
+                                                    getUserOnTimeCountDetails(
+                                                        item?.userId
+                                                    )?._count?._all
+                                                }
+                                            </p>
+                                        </td>
+                                    </tr>
+                                )
+                            )}
                         </tbody>
                     </table>
                 </motion.div>

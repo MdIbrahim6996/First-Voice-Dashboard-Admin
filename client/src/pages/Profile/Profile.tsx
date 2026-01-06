@@ -11,7 +11,13 @@ import { formatNumber, returnColors } from "../../utils/utils";
 
 const Profile = () => {
     const { user } = useContext(AuthContext);
-    const [time, setTime] = useState("thisMonth");
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const [time, setTime] = useState({
+        month: currentMonth,
+        year: currentYear,
+    });
 
     const { data = [] } = useQuery({
         queryKey: ["bar-chart", user?.id],
@@ -54,10 +60,10 @@ const Profile = () => {
             },
         ],
     };
-    const header =
-        time === "thisMonth"
-            ? monthNames[new Date().getMonth()]
-            : `This Year (${new Date().getFullYear()})`;
+    // const header =
+    //     time === "thisMonth"
+    //         ? monthNames[new Date().getMonth()]
+    //         : `This Year (${new Date().getFullYear()})`;
 
     return (
         <div className="overflow-y-scroll h-full">
@@ -95,7 +101,7 @@ const Profile = () => {
                     <div className="flex justify-between">
                         <p className="text-3xl italic mb-2 text-black/80">
                             <span className="capitalize">
-                                {time === "today" ? "Today's" : header}
+                                {/* {time === "today" ? "Today's" : header} */}
                             </span>{" "}
                             Analytics
                         </p>

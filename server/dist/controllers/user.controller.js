@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -67,7 +56,7 @@ var client_1 = require("@prisma/client");
 var appConstants_1 = require("../utils/appConstants");
 var arrayGrouping_1 = require("../utils/arrayGrouping");
 var lodash_1 = require("lodash");
-var cache_1 = require("../lib/cache");
+var date_1 = require("../utils/date");
 var createUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, alias, email, employeeId, phone, password, block, role, process_1, existingUser, existingUserwithEmployeeId, existingUserwithAlias, hashedPassword, user, error_1;
     return __generator(this, function (_b) {
@@ -316,8 +305,8 @@ var deleteUser = function (req, res, next) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.deleteUser = deleteUser;
-var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
-    var currentStartDay, nextStartDay, currentStartMonth, nextStartMonth, todayLead, totalLead, totalSuccessLead, totalAttendance, spd;
+var getProfileCardInfo = function (userId, month, year) { return __awaiter(void 0, void 0, void 0, function () {
+    var currentStartDay, nextStartDay, currentStartMonth, nextStartMonth, startDate, endDate, todayLead, totalLead, totalSuccessLead, totalAttendance, spd;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -334,6 +323,8 @@ var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, vo
                 nextStartMonth.setMonth(nextStartMonth.getMonth()); //change it later ,this line was +1
                 nextStartMonth.setDate(1);
                 nextStartMonth.setUTCHours(0, 0, 0, 0);
+                startDate = (0, date_1.getMonthStartAndEnd)(Number(month), Number(year)).start;
+                endDate = (0, date_1.getMonthStartAndEnd)(Number(month), Number(year)).nextStart;
                 return [4 /*yield*/, prismaClient_1.prisma.lead.count({
                         where: {
                             leadByUserId: userId,
@@ -345,7 +336,7 @@ var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, prismaClient_1.prisma.lead.count({
                         where: {
                             leadByUserId: userId,
-                            saleDate: { gte: currentStartMonth, lte: nextStartMonth },
+                            saleDate: { gte: new Date(startDate), lte: new Date(endDate) },
                         },
                     })];
             case 2:
@@ -354,7 +345,7 @@ var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, vo
                         where: {
                             leadByUserId: userId,
                             status: { name: "success" },
-                            saleDate: { gte: currentStartMonth, lte: nextStartMonth },
+                            saleDate: { gte: new Date(startDate), lte: new Date(endDate) },
                         },
                     })];
             case 3:
@@ -362,7 +353,7 @@ var getProfileCardInfo = function (userId) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, prismaClient_1.prisma.attendance.count({
                         where: {
                             userId: userId,
-                            dateTime: { gte: currentStartMonth, lte: nextStartMonth },
+                            dateTime: { gte: new Date(startDate), lte: new Date(endDate) },
                         },
                     })];
             case 4:
@@ -384,8 +375,8 @@ var getPieChartInfo = function (userId_1) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
     }
-    return __awaiter(void 0, __spreadArray([userId_1], args_1, true), void 0, function (userId, time) {
-        var filterDate, currentDate, startDay, nextDay, startMonth, endMonth, startYear, endYear, status, result;
+    return __awaiter(void 0, __spreadArray([userId_1], args_1, true), void 0, function (userId, time, month, year) {
+        var filterDate, currentDate, startDate, endDate, startDay, nextDay, startMonth, endMonth, startYear, endYear, status, result;
         if (time === void 0) { time = "thisMonth"; }
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -395,6 +386,8 @@ var getPieChartInfo = function (userId_1) {
                         endDate: new Date(),
                     };
                     currentDate = new Date();
+                    startDate = (0, date_1.getMonthStartAndEnd)(Number(month), Number(year)).start;
+                    endDate = (0, date_1.getMonthStartAndEnd)(Number(month), Number(year)).nextStart;
                     if (time === "today") {
                         startDay = currentDate.setUTCHours(0, 0, 0, 0);
                         nextDay = new Date(currentDate.setDate(currentDate.getDate() + 1)).setUTCHours(0, 0, 0, 0);
@@ -435,8 +428,8 @@ var getPieChartInfo = function (userId_1) {
                                             leadByUserId: userId,
                                             statusId: item === null || item === void 0 ? void 0 : item.id,
                                             saleDate: {
-                                                gte: filterDate.startDate,
-                                                lte: filterDate.endDate,
+                                                gte: startDate,
+                                                lte: endDate,
                                             },
                                         },
                                         _count: { _all: true },
@@ -464,70 +457,81 @@ var getPieChartInfo = function (userId_1) {
     });
 };
 var getUserInfo = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, user, cacheKey, profileData, userAttendance, grouped, _a, _b, _c, _d, _e, error_7;
-    var _f, _g;
-    return __generator(this, function (_h) {
-        switch (_h.label) {
+    var userId, _a, year, month, user, cacheKey, userAttendance, grouped, _b, _c, error_7;
+    var _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
                 userId = req.params.id;
-                _h.label = 1;
+                _a = req.query, year = _a.year, month = _a.month;
+                _e.label = 1;
             case 1:
-                _h.trys.push([1, 8, , 9]);
+                _e.trys.push([1, 6, , 7]);
                 return [4 /*yield*/, prismaClient_1.prisma.user.findFirst({
                         where: { id: parseInt(userId) },
                     })];
             case 2:
-                user = _h.sent();
+                user = _e.sent();
                 if (!user)
                     throw new Error("User doesn't exist.");
                 cacheKey = "userprofile_".concat(userId);
-                if (cache_1.cache.has(cacheKey)) {
-                    profileData = cache_1.cache.get(cacheKey);
-                    return [2 /*return*/, res.send(__assign(__assign({ currentPath: "/user/profile" }, profileData), { quote: (0, appConstants_1.returnRandomQuotes)() }))];
-                }
                 return [4 /*yield*/, prismaClient_1.prisma.attendance.findMany({
                         where: { userId: parseInt(userId) },
                         orderBy: { dateTime: "desc" },
                     })];
             case 3:
-                userAttendance = _h.sent();
+                userAttendance = _e.sent();
                 grouped = (0, lodash_1.groupBy)(userAttendance, function (record) {
                     return record.dateTime.toISOString().slice(5, 7);
                 });
-                _b = (_a = cache_1.cache).set;
-                _c = [cacheKey];
-                _f = {
+                // cache.set(
+                //     cacheKey,
+                //     {
+                //         data: grouped,
+                //         graphData: graphData(grouped),
+                //         cardInfo: await getProfileCardInfo(
+                //             parseInt(userId as string),
+                //             Number(month),
+                //             Number(year)
+                //         ),
+                //         pieChart: await getPieChartInfo(parseInt(userId as string)),
+                //     },
+                //     1000 * 60 * 60
+                // );
+                _c = (_b = res).send;
+                _d = {
                     data: grouped,
                     graphData: (0, arrayGrouping_1.graphData)(grouped)
                 };
-                return [4 /*yield*/, getProfileCardInfo(parseInt(userId))];
+                return [4 /*yield*/, getProfileCardInfo(parseInt(userId), Number(month), Number(year))];
             case 4:
-                _f.cardInfo = _h.sent();
-                return [4 /*yield*/, getPieChartInfo(parseInt(userId))];
+                _d.cardInfo = _e.sent();
+                return [4 /*yield*/, getPieChartInfo(parseInt(userId), "thisMonth", Number(month), Number(year))];
             case 5:
-                _b.apply(_a, _c.concat([(_f.pieChart = _h.sent(),
-                        _f), 1000 * 60 * 60]));
-                _e = (_d = res).send;
-                _g = {
-                    currentPath: "/user/profile",
-                    data: grouped,
-                    graphData: (0, arrayGrouping_1.graphData)(grouped)
-                };
-                return [4 /*yield*/, getProfileCardInfo(parseInt(userId))];
+                // cache.set(
+                //     cacheKey,
+                //     {
+                //         data: grouped,
+                //         graphData: graphData(grouped),
+                //         cardInfo: await getProfileCardInfo(
+                //             parseInt(userId as string),
+                //             Number(month),
+                //             Number(year)
+                //         ),
+                //         pieChart: await getPieChartInfo(parseInt(userId as string)),
+                //     },
+                //     1000 * 60 * 60
+                // );
+                _c.apply(_b, [(_d.pieChart = _e.sent(),
+                        _d.quote = (0, appConstants_1.returnRandomQuotes)(),
+                        _d)]);
+                return [3 /*break*/, 7];
             case 6:
-                _g.cardInfo = _h.sent();
-                return [4 /*yield*/, getPieChartInfo(parseInt(userId))];
-            case 7:
-                _e.apply(_d, [(_g.pieChart = _h.sent(),
-                        _g.quote = (0, appConstants_1.returnRandomQuotes)(),
-                        _g)]);
-                return [3 /*break*/, 9];
-            case 8:
-                error_7 = _h.sent();
+                error_7 = _e.sent();
                 console.log(error_7);
                 next(error_7);
-                return [3 /*break*/, 9];
-            case 9: return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); };

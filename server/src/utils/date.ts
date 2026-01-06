@@ -17,3 +17,16 @@ for (let i = 0; i < 12; i++) {
     };
     timeArr.push(obj);
 }
+
+export const getMonthStartAndEnd = (month: number, year: number) => {
+    year = Number(year);
+    month = Number(month) + 1;
+
+    const startOfMonth = new Date(year, month - 1, 2);
+    const startOfNextMonth = new Date(year, month, 2);
+
+    return {
+        start: new Date(startOfMonth.setUTCHours(0, 0, 0, 0)),
+        nextStart: new Date(startOfNextMonth.setUTCHours(0, 0, 0, 0)),
+    };
+};

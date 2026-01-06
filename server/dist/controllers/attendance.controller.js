@@ -212,7 +212,7 @@ var getEmployeePeriodwiseAttendance = function (req, res, next) { return __await
 }); };
 exports.getEmployeePeriodwiseAttendance = getEmployeePeriodwiseAttendance;
 var getEmployeeMonthlyAttendance = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var currentMonth, currentYear, _a, _b, year, _c, month, _d, name_1, attendance, isLateCount, onTimeCount, userData, error_5;
+    var currentMonth, currentYear, _a, _b, year, _c, month, _d, name_1, lessThanDate, attendance, isLateCount, onTimeCount, userData, error_5;
     return __generator(this, function (_e) {
         switch (_e.label) {
             case 0:
@@ -220,6 +220,12 @@ var getEmployeeMonthlyAttendance = function (req, res, next) { return __awaiter(
                 currentMonth = new Date().getMonth();
                 currentYear = new Date().getFullYear();
                 _a = req.query, _b = _a.year, year = _b === void 0 ? currentYear : _b, _c = _a.month, month = _c === void 0 ? currentMonth : _c, _d = _a.name, name_1 = _d === void 0 ? undefined : _d;
+                console.log(parseInt(month) === 11
+                    ? parseInt(year) + 1
+                    : year);
+                lessThanDate = new Date("".concat(parseInt(month) === 11
+                    ? parseInt(year) + 1
+                    : year, "-").concat((parseInt(month) + 2) % 12, "-01"));
                 return [4 /*yield*/, prismaClient_1.prisma.attendance.groupBy({
                         by: ["userId"],
                         _count: { _all: true },
@@ -227,7 +233,7 @@ var getEmployeeMonthlyAttendance = function (req, res, next) { return __awaiter(
                             userId: { not: null },
                             dateTime: {
                                 gte: new Date("".concat(year, "-").concat(parseInt(month) + 1, "-01")),
-                                lt: new Date("".concat(year, "-").concat(parseInt(month) + 2, "-01")),
+                                lt: lessThanDate,
                             },
                             user: { name: name_1 ? String(name_1) : client_1.Prisma.skip },
                         },
@@ -242,7 +248,7 @@ var getEmployeeMonthlyAttendance = function (req, res, next) { return __awaiter(
                             isLate: true,
                             dateTime: {
                                 gte: new Date("".concat(year, "-").concat(parseInt(month) + 1, "-01")),
-                                lt: new Date("".concat(year, "-").concat(parseInt(month) + 2, "-01")),
+                                lt: lessThanDate,
                             },
                             user: { name: name_1 ? String(name_1) : client_1.Prisma.skip },
                         },
@@ -257,7 +263,7 @@ var getEmployeeMonthlyAttendance = function (req, res, next) { return __awaiter(
                             isLate: false,
                             dateTime: {
                                 gte: new Date("".concat(year, "-").concat(parseInt(month) + 1, "-01")),
-                                lt: new Date("".concat(year, "-").concat(parseInt(month) + 2, "-01")),
+                                lt: lessThanDate,
                             },
                             user: { name: name_1 ? String(name_1) : client_1.Prisma.skip },
                         },

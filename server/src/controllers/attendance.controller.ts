@@ -192,6 +192,19 @@ export const getEmployeeMonthlyAttendance = async (
             month = currentMonth,
             name = undefined,
         } = req.query;
+        console.log(
+            parseInt(month as string) === 11
+                ? parseInt(year as string) + 1
+                : year
+        );
+
+        const lessThanDate = new Date(
+            `${
+                parseInt(month as string) === 11
+                    ? parseInt(year as string) + 1
+                    : year
+            }-${(parseInt(month as string) + 2) % 12}-01`
+        );
 
         const attendance = await prisma.attendance.groupBy({
             by: ["userId"],
@@ -202,7 +215,7 @@ export const getEmployeeMonthlyAttendance = async (
                     gte: new Date(
                         `${year}-${parseInt(month as string) + 1}-01`
                     ),
-                    lt: new Date(`${year}-${parseInt(month as string) + 2}-01`),
+                    lt: lessThanDate,
                 },
                 user: { name: name ? String(name) : Prisma.skip },
             },
@@ -217,7 +230,7 @@ export const getEmployeeMonthlyAttendance = async (
                     gte: new Date(
                         `${year}-${parseInt(month as string) + 1}-01`
                     ),
-                    lt: new Date(`${year}-${parseInt(month as string) + 2}-01`),
+                    lt: lessThanDate,
                 },
                 user: { name: name ? String(name) : Prisma.skip },
             },
@@ -232,7 +245,7 @@ export const getEmployeeMonthlyAttendance = async (
                     gte: new Date(
                         `${year}-${parseInt(month as string) + 1}-01`
                     ),
-                    lt: new Date(`${year}-${parseInt(month as string) + 2}-01`),
+                    lt: lessThanDate,
                 },
                 user: { name: name ? String(name) : Prisma.skip },
             },

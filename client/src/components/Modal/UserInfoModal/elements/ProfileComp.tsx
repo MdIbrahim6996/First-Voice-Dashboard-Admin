@@ -3,18 +3,30 @@ import { motion } from "motion/react";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
 
-import {  getUserInfo } from "../../../../api/user";
+import { getUserInfo } from "../../../../api/user";
 import { useState } from "react";
-import {  returnColors } from "../../../../utils/utils";
+import { returnColors } from "../../../../utils/utils";
 import { monthNames } from "../../../../constants/appConstant";
 
 const ProfileComp = ({ userId }: { userId: number }) => {
-    const thisMonth = new Date().getMonth();
-    const [time, setTime] = useState("thisMonth");
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const [time, setTime] = useState({
+        month: currentMonth,
+        year: currentYear,
+    });
 
     const { data: leadData = [] } = useQuery({
-        queryKey: [`profile-${userId}`, time],
-        queryFn: () => getUserInfo(userId, time),
+        queryKey: [`profile-${userId}`, time.month, time.year],
+        queryFn: ({ queryKey }) => {
+            const [_, month, year] = queryKey;
+            return getUserInfo(userId, {
+                month: Number(month),
+                year: Number(year),
+            });
+        },
+        staleTime: 0,
     });
 
     // console.log(leadData);
@@ -25,19 +37,19 @@ const ProfileComp = ({ userId }: { userId: number }) => {
     // });
 
     const cardData = leadData?.cardInfo;
+    console.log(cardData);
+    const pieChart = leadData?.pieChart ?? [];
 
     const piedata = {
         datasets: [
             {
-                data: leadData?.pieChart?.map((item: any) => item?.count),
+                data: pieChart?.map((item: any) => item?.count),
                 backgroundColor: leadData?.pieChart?.map((item: any) =>
                     returnColors(item?.status)
                 ),
             },
         ],
-        labels: leadData?.pieChart?.map((item: any) =>
-            item?.status?.toUpperCase()
-        ),
+        labels: pieChart?.map((item: any) => item?.status?.toUpperCase()),
     };
     return (
         <section className="p-4">
@@ -51,19 +63,38 @@ const ProfileComp = ({ userId }: { userId: number }) => {
                     <p className="text-3xl italic mb-2 text-black/80">
                         {/* <span className="capitalize">{time}</span>'s Analytics */}
                         <span className="capitalize">
-                            {monthNames[thisMonth]}
+                            {monthNames[time?.month]}
                         </span>
                         's Analytics
                     </p>
-                    <div>
+                    <div className="space-x-2">
                         <select
-                            onClick={(e: any) => setTime(e.target.value!)}
-                            defaultValue={"thisMonth"}
+                            onChange={(e: any) =>
+                                setTime({
+                                    ...time,
+                                    month: Number(e.target.value!),
+                                })
+                            }
+                            defaultValue={currentMonth}
                             className="border border-slate-400 px-5 py-1 rounded-md text-sm cursor-pointer outline-none"
                         >
-                            <option value="today">TODAY</option>
-                            <option value="thisMonth">THIS MONTH</option>
-                            <option value="thisYear">THIS YEAR</option>
+                            {monthNames?.map((item, i) => (
+                                <option value={i}>{item}</option>
+                            ))}
+                        </select>
+                        <select
+                            onChange={(e: any) =>
+                                setTime({
+                                    ...time,
+                                    year: Number(e.target.value!),
+                                })
+                            }
+                            defaultValue={currentYear}
+                            className="border border-slate-400 px-5 py-1 rounded-md text-sm cursor-pointer outline-none"
+                        >
+                            <option value={2025}>2025</option>
+                            <option value={2026}>2026</option>
+                            <option value={2027}>2027</option>
                         </select>
                     </div>
                 </div>

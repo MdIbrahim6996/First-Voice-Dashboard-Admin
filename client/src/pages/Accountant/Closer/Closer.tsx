@@ -88,7 +88,7 @@ const Closer = () => {
                             className="flex justify-between items-center origin-center"
                         >
                             <p className="text-3xl font-semibold uppercase origin-center w-fit">
-                                My Workspsaces - All Closer
+                                All Closers
                             </p>
                         </motion.div>
                     </div>
@@ -150,12 +150,6 @@ const Closer = () => {
                                     >
                                         Role
                                     </th>
-                                    {/* <th
-                                        scope="col"
-                                        className="px-6 py-3 whitespace-nowrap "
-                                    >
-                                        Phone
-                                    </th> */}
                                     <th
                                         scope="col"
                                         className="px-6 py-3 whitespace-nowrap"
@@ -168,12 +162,6 @@ const Closer = () => {
                                     >
                                         blocked
                                     </th>
-                                    {/* <th
-                                        scope="col"
-                                        className="px-6 py-3 whitespace-nowrap"
-                                    >
-                                        Process
-                                    </th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -210,9 +198,6 @@ const Closer = () => {
                                         <td className="px-6 py-4">
                                             {item?.role}
                                         </td>
-                                        {/* <td className="px-6 py-4">
-                                            {item?.phone}
-                                        </td> */}
                                         <td className="px-6 py-4 lowercase">
                                             {item?.email}
                                         </td>
@@ -227,9 +212,6 @@ const Closer = () => {
                                                 </p>
                                             )}
                                         </td>
-                                        {/* <td className="px-6 py-4">
-                                            {item?.process?.name}
-                                        </td> */}
                                     </tr>
                                 ))}
                             </tbody>

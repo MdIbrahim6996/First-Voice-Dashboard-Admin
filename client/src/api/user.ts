@@ -128,10 +128,14 @@ export const getUserYearlyLeadsVerified = async (id: number) => {
     }
 };
 // USER
-export const getUserInfo = async (id: number, time: string) => {
+export const getUserInfo = async (
+    id: number,
+    time: { month: number; year: number }
+) => {
+    console.log(time);
     try {
         const { data } = await axiosInstance.get(
-            `${SERVER_URL}/user/${id}?time=${time}`
+            `${SERVER_URL}/user/${id}?year=${time.year}&month=${time.month}`
         );
         return data;
     } catch (error) {

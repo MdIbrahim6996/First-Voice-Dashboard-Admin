@@ -15,7 +15,6 @@ const Users = () => {
         delete: false,
     });
     const [id, setId] = useState<number>();
-
     const [name, setName] = useState<string>("");
 
     const { data: user, refetch } = useQuery({
@@ -48,12 +47,12 @@ const Users = () => {
                     >
                         <div className=" flex flex-col gap-1 mb-5 w-fit">
                             <div className="flex flex-col space-y-1">
-                                <label htmlFor="name">Name</label>
+                                <label htmlFor="name">Alias</label>
                                 <input
                                     autoComplete="off"
                                     type="text"
                                     name="name"
-                                    placeholder="NAME"
+                                    placeholder="Alias"
                                     value={name}
                                     onChange={(e) => setName(e?.target?.value)}
                                     onKeyDown={(
@@ -89,7 +88,7 @@ const Users = () => {
                             className="flex justify-between items-center origin-center"
                         >
                             <p className="text-3xl font-semibold uppercase origin-center w-fit">
-                                My Workspsaces - All Users
+                                All Users
                             </p>
                         </motion.div>
                     </div>
