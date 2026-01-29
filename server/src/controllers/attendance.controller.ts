@@ -277,7 +277,7 @@ export const getAllAttendance = async (
     try {
         const attendances = await prisma.attendance.findMany({
             orderBy: { dateTime: "desc" },
-            include: { user: { select: { name: true } } },
+            include: { user: { select: { alias: true } } },
             where: {
                 user: { name: name ? (name as string) : Prisma.skip },
                 userId: { not: null },
@@ -288,6 +288,7 @@ export const getAllAttendance = async (
                     lte: endDate ? new Date(endDate as string) : Prisma.skip,
                 },
             },
+            take: 100,
         });
         res.send(attendances);
     } catch (error) {

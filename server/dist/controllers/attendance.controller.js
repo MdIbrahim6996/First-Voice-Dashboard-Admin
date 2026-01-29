@@ -305,7 +305,7 @@ var getAllAttendance = function (req, res, next) { return __awaiter(void 0, void
                 _b.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, prismaClient_1.prisma.attendance.findMany({
                         orderBy: { dateTime: "desc" },
-                        include: { user: { select: { name: true } } },
+                        include: { user: { select: { alias: true } } },
                         where: {
                             user: { name: name ? name : client_1.Prisma.skip },
                             userId: { not: null },
@@ -316,6 +316,7 @@ var getAllAttendance = function (req, res, next) { return __awaiter(void 0, void
                                 lte: endDate ? new Date(endDate) : client_1.Prisma.skip,
                             },
                         },
+                        take: 100,
                     })];
             case 2:
                 attendances = _b.sent();

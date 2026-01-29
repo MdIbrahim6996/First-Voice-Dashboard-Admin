@@ -19,6 +19,7 @@ export const getAppliances = async (
         next(error);
     }
 };
+
 export const getAppliancePerPage = async (
     req: Request,
     res: Response,
@@ -36,6 +37,7 @@ export const getAppliancePerPage = async (
         next(error);
     }
 };
+
 export const updateAppliance = async (
     req: Request,
     res: Response,

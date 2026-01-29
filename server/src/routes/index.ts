@@ -7,11 +7,11 @@ import processRoutes from "./process.route";
 import userRoutes from "./user.route";
 import statusRoutes from "./status.route";
 import applianceRoutes from "./appliance.route";
+import teamRoutes from "./team.route";
 
 import {
     loginController,
     logoutController,
-    registerController,
 } from "../controllers/auth.controller";
 import { getUserDetails } from "../controllers/common.controller";
 import { isAuth } from "../middlewares/authMiddleware";
@@ -32,6 +32,7 @@ router.use("/process", processRoutes);
 router.use("/status", statusRoutes);
 router.use("/user", userRoutes);
 router.use("/appliance", applianceRoutes);
+router.use("/team", teamRoutes);
 router.get("/common/user-detail", isAuth, getUserDetails);
 
 export default router;

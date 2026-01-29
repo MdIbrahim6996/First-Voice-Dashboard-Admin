@@ -12,6 +12,7 @@ CREATE TABLE `user` (
     `updatedAt` DATETIME(3) NOT NULL,
     `alias` VARCHAR(191) NOT NULL,
     `processId` INTEGER NULL,
+    `teamId` INTEGER NULL,
 
     UNIQUE INDEX `user_email_key`(`email`),
     UNIQUE INDEX `user_employeeId_key`(`employeeId`),
@@ -57,7 +58,7 @@ CREATE TABLE `holiday` (
 -- CreateTable
 CREATE TABLE `attendance` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NULL DEFAULT 1,
+    `userId` INTEGER NULL,
     `isLate` BOOLEAN NOT NULL DEFAULT false,
     `dateTime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -99,7 +100,7 @@ CREATE TABLE `lead` (
     `bankName` VARCHAR(191) NULL,
     `accountName` VARCHAR(191) NULL,
     `sort` VARCHAR(191) NULL,
-    `statusId` INTEGER NULL DEFAULT 1,
+    `statusId` INTEGER NULL,
     `saleDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -170,6 +171,19 @@ CREATE TABLE `status_change_reason` (
     `fromStatus` VARCHAR(191) NULL,
     `toStatus` VARCHAR(191) NULL,
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `team` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `managerId` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `team_name_key`(`name`),
+    UNIQUE INDEX `team_managerId_key`(`managerId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -289,6 +303,9 @@ CREATE TABLE `lead_forms` (
 ALTER TABLE `user` ADD CONSTRAINT `user_processId_fkey` FOREIGN KEY (`processId`) REFERENCES `process`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `user` ADD CONSTRAINT `user_teamId_fkey` FOREIGN KEY (`teamId`) REFERENCES `team`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `plan` ADD CONSTRAINT `plan_processId_fkey` FOREIGN KEY (`processId`) REFERENCES `process`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -326,6 +343,9 @@ ALTER TABLE `status_change_reason` ADD CONSTRAINT `status_change_reason_leadId_f
 
 -- AddForeignKey
 ALTER TABLE `status_change_reason` ADD CONSTRAINT `status_change_reason_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `team` ADD CONSTRAINT `team_managerId_fkey` FOREIGN KEY (`managerId`) REFERENCES `user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `old_leads` ADD CONSTRAINT `leads_closer_user_id_foreign` FOREIGN KEY (`closer_user_id`) REFERENCES `old_users`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

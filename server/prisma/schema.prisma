@@ -29,6 +29,10 @@ model User {
   Notification       Notification[]
   StatusChangeReason StatusChangeReason[]
   process            Process?             @relation(fields: [processId], references: [id])
+  teamId             Int?
+  Team               Team?                @relation("TeamMembers", fields: [teamId], references: [id])
+
+  managedTeam Team? @relation("TeamManager")
 
   @@map("user")
 }
@@ -193,6 +197,21 @@ model StatusChangeReason {
   user       User?    @relation(fields: [userId], references: [id])
 
   @@map("status_change_reason")
+}
+
+model Team {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  managerId Int?  @unique
+  manager   User? @relation("TeamManager", fields: [managerId], references: [id])
+
+  members User[] @relation("TeamMembers")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team")
 }
 
 model old_users {
